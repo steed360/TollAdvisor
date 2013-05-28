@@ -286,6 +286,33 @@ class Test_GraphRepositoryFactory (unittest.TestCase):
         self.failUnless ( t2.getID () in graphRepo ) 
 
 
+from DataStructures import d_priority_dict
+from DataStructures import EdgeCost
+
+class Test_priority_dict (unittest.TestCase):
+
+    def setUp(self):
+
+         pass   
+
+    def testpd(self):
+
+        '''
+        Check that priority_dict iterates correctly
+
+        '''
+        PD = d_priority_dict ()
+        PD ['medium'] = EdgeCost ( 500.0 ) 
+        PD ['high']   = EdgeCost ( 10000.0 ) 
+        PD ['low']    = EdgeCost ( 5.0 ) 
+ 
+        resultList = []
+        for e in PD: 
+            resultList.append (e)
+        self.failUnless ( resultList == ['low', 'medium', 'high' ] )
+
+        self.failUnless ( len ( PD ) ==0 )
+
 if __name__ == "__main__":
 
     import unittest
@@ -294,6 +321,5 @@ if __name__ == "__main__":
     suites = unittest.defaultTestLoader.loadTestsFromName ("tests")
     testSuite = unittest.TestSuite(suites)
     text_runner = unittest.TextTestRunner().run(testSuite)
-
 
 

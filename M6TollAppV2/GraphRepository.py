@@ -12,7 +12,6 @@ to access the singleton.
 from gis import Tile
 from apperror import AppError
 
-
 def getGraphRepository ():
     pass
 

@@ -18,7 +18,6 @@ Classes in this module are:
 
 - TestDataStore
 
-
 '''
 
 from DataStructures import GISEdge
@@ -222,7 +221,6 @@ class AWS_S3DataStore (GenericDataStore):
         conn.close ()
 
         return resultList
-
 
     def _getS3Connection (self):
 
