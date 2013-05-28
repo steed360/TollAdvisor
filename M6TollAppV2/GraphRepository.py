@@ -122,11 +122,13 @@ class GraphRepository (dict):
 
         while ( numTilesToKeep +  len ( sortedKeys ) > maxTiles ):
 
-            print (sortedKeys)
             poppedKey = sortedKeys.pop () [1]
             self.pop ( poppedKey, None )
  
 class GraphRepositoryFactory (object):
+
+    def __init__(self):
+        pass
 
     def create (self, objDataStore, lstCoreTiles):
         '''

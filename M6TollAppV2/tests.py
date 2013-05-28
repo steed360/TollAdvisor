@@ -252,6 +252,38 @@ class Test_GraphRepository_Basic (unittest.TestCase):
 
         self.failUnless ( len (GR) == 2 ) 
 
+class Test_GraphRepositoryFactory (unittest.TestCase):
+
+    def setUp(self):
+
+        self.TestDataStore = DataStore.TestDataStore ()
+
+        l = "1911086|1911202|0.0011870678|0.0011870678|0.083094746|70|f|"\
+            "LINESTRING(-702231.879109461 6431264.28019654,-702291.746731609"\
+            " 6431378.7559089)|POINT(-6.3085252 49.9135723)|-6|50"
+   
+        self.TestDataStore.addEdgeString ( l ) 
+   
+
+    def testCreate(self):
+
+        '''
+        Create a Graph repository using the DataStore
+        '''
+
+        t1  =  Tile (1 ,1)
+        t2 =  Tile  (2 ,2)
+
+        tileList = [t1, t2]     
+
+        GRF = GraphRepositoryFactory ( ) 
+
+        graphRepo= GRF.create (self.TestDataStore , tileList )
+
+        self.failUnless ( len (graphRepo) == 2  ) 
+
+        self.failUnless ( t1.getID () in graphRepo ) 
+        self.failUnless ( t2.getID () in graphRepo ) 
 
 
 if __name__ == "__main__":
@@ -262,5 +294,6 @@ if __name__ == "__main__":
     suites = unittest.defaultTestLoader.loadTestsFromName ("tests")
     testSuite = unittest.TestSuite(suites)
     text_runner = unittest.TextTestRunner().run(testSuite)
+
 
 
