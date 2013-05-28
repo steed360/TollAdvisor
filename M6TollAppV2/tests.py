@@ -205,6 +205,44 @@ class Test_GraphRepository_Basic (unittest.TestCase):
         self.failUnless ( len (GR)==  1 ) 
         self.failUnless ( poppedVal ==  self.graph_1_1  ) 
 
+    def testGetgraphs (self):
+
+        '''
+        Test that getGraphs() works as expected        
+        '''
+
+        t1 = Tile ( 1, 0 ) 
+        t2 = Tile ( 1, 1 ) 
+        
+        GR = GraphRepository ([])
+        GR[t1] = self.graph_1_1
+        GR[t2] = self.graph_2_2
+
+        lstResults = GR.getGraphs ()
+
+        self.failUnless ( lstResults [0] == self.graph_1_1 )
+        self.failUnless ( lstResults [1] == self.graph_2_2 )
+
+
+    def testGetKeys (self):
+
+        '''
+        Test that getGraphs() works as expected        
+        '''
+
+        t1 = Tile ( 1, 0 ) 
+        t2 = Tile ( 1, 1 ) 
+        
+        GR = GraphRepository ([])
+        GR[t1] = self.graph_1_1
+        GR[t2] = self.graph_2_2
+
+        lstResults = GR.getKeys ()
+
+        self.failUnless ( lstResults [0] ==  str(t1) )
+        self.failUnless ( lstResults [1] ==  str(t2) )
+
+
     def testGRBasicCache(self):
 
         '''
@@ -301,6 +339,7 @@ class Test_priority_dict (unittest.TestCase):
         Check that priority_dict iterates correctly
 
         '''
+
         PD = d_priority_dict ()
         PD ['medium'] = EdgeCost ( 500.0 ) 
         PD ['high']   = EdgeCost ( 10000.0 ) 
@@ -312,6 +351,51 @@ class Test_priority_dict (unittest.TestCase):
         self.failUnless ( resultList == ['low', 'medium', 'high' ] )
 
         self.failUnless ( len ( PD ) ==0 )
+
+from DataStructures import CompositeGraph
+from GraphRepository import GraphRepository
+
+class Test_CompositeGraph (unittest.TestCase):
+
+    def setUp(self):
+        self.graph_1_1 =  {'a': 1, 'b': 2}
+        self.graph_2_2 =  {'c': 3, 'd': 4}
+        self.graph_3_3 =  {'j': 3, 'l': 4}
+        self.graph_4_4 =  {'k': 3, 'm': 4}
+
+    def testKeyAccess (self):
+
+        '''
+        Check that the Composite Graph behaves as expected.
+
+        '''
+
+        t1 = Tile ( 1, 0 ) 
+        t2 = Tile ( 1, 1 ) 
+        t3 = Tile ( 2, 2 ) 
+        t4 = Tile ( 3, 3 ) 
+        
+        GR = GraphRepository ([])
+
+        GR[t1] = self.graph_1_1
+        GR[t2] = self.graph_2_2
+        GR[t3] = self.graph_3_3
+        GR[t4] = self.graph_4_4
+
+        CG = CompositeGraph ( GR )
+
+        for key in self.graph_1_1:
+            self.failUnless ( self.graph_1_1 [key] == CG[key]     )
+
+        for key in self.graph_2_2:
+            self.failUnless ( self.graph_2_2 [key] == CG[key]     )
+
+        for key in self.graph_3_3:
+            self.failUnless ( self.graph_3_3 [key] == CG[key]     )
+
+        for key in self.graph_4_4:
+            self.failUnless ( self.graph_4_4 [key] == CG[key]     )
+
 
 if __name__ == "__main__":
 

@@ -174,14 +174,11 @@ class AWS_S3DataStore (GenericDataStore):
     
     def _getStringList (self, thisTile):
 
-        print "create AWS CONN"
  
         conn = self._getS3Connection ()
 
         bucketRef = None
         keyID = None 
-
-        print "get bucket ref"
 
         try:
             bucketRef =conn.get_bucket ( self.bucketPrefix );
@@ -194,8 +191,6 @@ class AWS_S3DataStore (GenericDataStore):
         strEdges = None
         tileID = thisTile.getID ()
         keyRef = None
-
-        print "get key ref and write to str"
 
 
         try:
@@ -212,7 +207,6 @@ class AWS_S3DataStore (GenericDataStore):
         listLen = len ( someLines )
         count = 0
 
-        print "break up string "
         while (len ( someLines ) > 0 ):
             aLine = someLines.pop ()
             if len (aLine ) > 0:

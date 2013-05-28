@@ -238,8 +238,8 @@ class CompositeGraph (dict):
     keys of each sub dictionary as though the key/value pair belonged
     to this dictionary.
 
-    Note : many standard dictionary functions (e.g.iteration are NOT 
-    supported).
+    Note : many standard dictionary functions are not supported.  
+    In particular this structure does not provide (a correct) iterator.
 
     '''
 
@@ -276,5 +276,3 @@ class CompositeGraph (dict):
         '''
         pass
  
-
-   
