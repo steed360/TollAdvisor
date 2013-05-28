@@ -5,9 +5,9 @@ Define data structures required for the shortest path algorithms.
 The following classes are defined:
 
 - EdgeCost            Abstract base class returning a comparable value 
-                      of it's travel cost
+                      of its travel cost
 
-- GISEdge             Subclass of EdgeCost.  With information for drawing the 
+- GISEdge             Subclass of EdgeCost.  Adds information for drawing the 
                       Edge. Included up front due at a cost of memory overhead
                       due to the cost of fetching this data over the network.
 
@@ -15,8 +15,9 @@ The following classes are defined:
                       on value of it's contents  
 
 - DestructivePriorityDict        
-                      Subclass of dictionary performing ordered iteration 
-                      on value of it's contents  
+                      Subclass of PriorityDict that removes each at the end of each
+                      each iteration loop.  Permit efficient simulation of searching
+                      through a 'frontier list' in the Dijkstra routing search
 
 - DynamicGraph        
 

@@ -10,6 +10,7 @@ to access the singleton.
 '''
 
 from gis import Tile
+from apperror import AppError
 
 
 def getGraphRepository ():
@@ -66,7 +67,6 @@ class GraphRepository (dict):
 
         '''
 
-
         keyStr = str (key ) # key might be a Tile object
 
         try:
@@ -109,9 +109,11 @@ class GraphRepositoryFactory (object):
         '''
  
         gr = GraphRepository(lstCoreTiles)
-          
+
         for thisTile in lstCoreTiles:
             thisGraph = objDataStore.loadEdgeGraphForTile ( str ( thisTile ) )
             gr [ thisTile ] = thisGraph
+
+        return gr
 
 
