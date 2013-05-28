@@ -32,6 +32,9 @@ class GraphRepository (dict):
     things up correctly.  However, an AppError will be thrown if a 
     missing subGraph is requested.
 
+    Graph repository implements Observable. In particular it needs to 
+    notify the DynamicGraph when it's data has changed.
+
     '''
 
     def __init__ (self, lstImmutableTiles ):
@@ -51,16 +54,6 @@ class GraphRepository (dict):
         self.lstImmutableTiles = [str(st) for st in lstImmutableTiles]
         self.accessFrequency = {}
 
-
-    def cacheSize ():
-
-        '''
-        Currently returns the number of tiles.
-  
-        May be modified to reflect the actual memory overhead of each tile.
-        '''
-
-        return len ( self )
  
     def __getitem__(self, key):
 
@@ -100,6 +93,41 @@ class GraphRepository (dict):
         self.accessFrequency.pop ( keyStr, None)
         return dict.__delitem__(self, self.__keytransform__(keyStr))
 
+    def getKeys (self):
+        '''
+        Return a list of all of the Tile (key)s currently held in the repository
+        '''
+
+        lst= []
+        try:
+            for key,val in self.iteritems ():
+                lst.append ( key ) 
+        except Exception as e:
+            import traceback, utils
+            utils.logError ( traceback.format_exc() )
+            raise AppError (utils.timestampStr (), 'GraphRepository', \
+                            'Iterating repository, at key %s:' %(key), e )
+
+        return lst
+
+    def getGraphs (self):
+
+        '''
+        Return a list of all of the graphs currently held in the repository
+        '''
+
+        lst= []
+        try:
+            for key,val in self.iteritems ():
+                lst.append ( val ) 
+        except Exception as e:
+            import traceback, utils
+            utils.logError ( traceback.format_exc() )
+            raise AppError (utils.timestampStr (), 'GraphRepository', \
+                            'Iterating repository, at key %s:' %(key), e )
+
+        return lst
+
     def trim (self, maxTiles):
 
         '''
@@ -123,6 +151,7 @@ class GraphRepository (dict):
 
             poppedKey = sortedKeys.pop () [1]
             self.pop ( poppedKey, None )
+
  
 class GraphRepositoryFactory (object):
 

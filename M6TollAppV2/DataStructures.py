@@ -4,8 +4,18 @@
 Define data structures required for the shortest path algorithms.
 The following classes are defined:
 
+The key structure in this routing app is a graph G, defined as   
+
+
+    G = { nodeA:  { nodeB : cost_A-B, nodeC: cost_A-C },
+          nodeB:  { nodeA : cost_B-A                  },
+          nodeC:  { nodeC : cost_C-A                  }
+        }
+
+
 - EdgeCost            Abstract base class returning a comparable value 
-                      of its travel cost
+                      of its travel cost. I.E replaces cost_A-C in the above
+                      graph example
 
 - GISEdge             Subclass of EdgeCost.  Adds information for drawing the 
                       Edge. Included up front due at a cost of memory overhead
@@ -19,10 +29,18 @@ The following classes are defined:
                       order. At the end of each iteration the selected key/value item 
                       is deleted.
 
-- DynamicGraph        
+- CompositeGraph      Provides key value access to a set of different sub graphs.
+                      Caters for the routing algorithm which expects a single graph.
+                      Allows for the fact that this app has memory restrictions on the 
+                      number of graphs permiited in memory at one time. 
+                      Works closely with  GraphRepository.GraphRepository.
 
 
 '''
+
+from heapq import heapify, heappush, heappop
+from GraphRepository import GraphRepository
+from apperror import AppError
 
 
 class EdgeCost (object):
@@ -187,6 +205,7 @@ class priority_dict(dict):
 
 
 class d_priority_dict (priority_dict):
+
     '''
     Destructive priority dictionary.  Provides an iterator across dictionary keys
     which self-sort by dictionary values.  The last accessed key/value is deleted 
@@ -202,3 +221,60 @@ class d_priority_dict (priority_dict):
         return iterfn()
 
 
+class CompositeGraph (dict):
+    
+    '''
+    This is a composite set of dictionaries but it must provide access
+    to a value via a key seamlessley.
+
+    E.g. Graph 1 may represent the area covered by Tile 1
+         - and contain the key A
+         Graph 2 may represent the area covered by Tile 2
+         - and contain the key B
+    
+         CD is a 
+
+    Receives a list of dictionaries and then provides access to the 
+    keys of each sub dictionary as though the key/value pair belonged
+    to this dictionary.
+
+    Note : many standard dictionary functions (e.g.iteration are NOT 
+    supported).
+
+    '''
+
+    def __init__ (self, GraphRepository ):
+
+        '''
+        Tightly bind this structure to the GraphRepository.
+        Consider looser linking.
+        '''
+   
+        self.GraphRepository = GraphRepository
+
+    def __getitem__(self, key):
+
+        '''
+        Handle  case in which a Tile OBJECT is used 
+        Also increment the frequency counter for this tile.
+
+        '''
+ 
+        lstAvailableGraphs = []
+        lstAvailableGraphs = self.GraphRepository.getGraphs ()
+
+        for eachGraph in lstAvailableGraphs:
+            if key in eachGraph:
+                return eachGraph[key]
+
+        raise AppError (utils.timestampStr (), 'DataStructures.DynamicGraph', \
+                        'Failed to find key "%s" in DynamicGraph:' %(key), e )
+
+    def __setitem__(self, key, val):
+        '''
+        Not implemented
+        '''
+        pass
+ 
+
+   
