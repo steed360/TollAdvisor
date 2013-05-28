@@ -1,6 +1,7 @@
 
 import unittest
 from gis import Tile
+from apperror import AppError
 
 class TestTile (unittest.TestCase):
 
@@ -153,20 +154,105 @@ class TestTest_AWS_S3DataStore (unittest.TestCase):
 
 
 from GraphRepository import GraphRepositoryFactory
-from DataStore import TestDataStore
+from GraphRepository import GraphRepository
 
-class Test_GraphRepository (unittest.TestCase):
+from DataStore import TestDataStore
+from gis import Tile
+
+class Test_GraphRepository_Basic (unittest.TestCase):
 
     def setUp(self):
 
-        self.factory = GraphRepositoryFactory ()
-        self.graph =  {'a': 1, 'b', 2}
+        self.graph_1_1 =  {'a': 1, 'b': 2}
+        self.graph_2_2 =  {'c': 3, 'd': 4}
+        self.graph_3_3 =  {'j': 3, 'l': 4}
+        self.graph_4_4 =  {'k': 3, 'm': 4}
 
-    def _test_loadGraphFromS3(self):
+
+    def testGRAccessing(self):
 
         '''
-                
+        Test setting and accessing Tiles from the Repo        
         '''
+
+        t1 = Tile ( 1, 0 ) 
+        t2 = Tile ( 1, 1 ) 
+        
+        GR = GraphRepository ([])
+        GR[t1] = self.graph_1_1
+        GR[t2] = self.graph_2_2
+
+        self.failUnless ( GR[t1.getID()]['a'] == 1    )
+        self.failUnless ( GR[t2.getID()]['c'] == 3    )
+
+        # better not to do this
+        self.failUnless ( GR[t1]['a'] == 1    )
+        self.failUnless ( GR[t2]['c'] == 3    )
+
+        # safer way
+        self.failUnless ( GR.accessFrequency[ t1.getID () ] == 2 )
+
+        self.failUnless ( t1.getID () in GR )
+
+        notThereTile = Tile (1,100)
+        try:
+            print (GR [notThereTile]  )
+        except AppError as ae:
+           self.failUnless ( ae.args[1] == 'GraphRepository' )
+
+        # try deleting
+        poppedVal = GR.pop (t1.getID() ) 
+        self.failUnless ( len (GR)==  1 ) 
+        self.failUnless ( poppedVal ==  self.graph_1_1  ) 
+
+    def testGRBasicCache(self):
+
+        '''
+        Test the basic cache in the Graph Repository
+        '''
+
+        t1 = Tile ( 1, 1 ) 
+        t2 = Tile ( 2, 2 ) 
+        t3 = Tile ( 5, 5 ) 
+        t4 = Tile ( 6, 6 ) 
+    
+        immutableList = [Tile(1,1).getID(), t2  ]
+
+        GR = GraphRepository ( immutableList )
+        GR[t1] = self.graph_1_1
+        GR[t2] = self.graph_2_2
+        GR[t3] = self.graph_3_3
+        GR[t4] = self.graph_4_4
+
+        self.failUnless ( len (GR) == 4 ) 
+  
+        # trim should do nothing unless maxSize has been set
+        GR.trim (4)
+        self.failUnless ( len (GR) == 4 ) 
+
+
+        # access t3, then t3 will be the most accessed 
+        # and preserved 
+        x = GR[t3]
+
+        # but t4, should be the candidate that is discarded
+        GR.trim (3)
+        self.failUnless ( len (GR) == 3 ) 
+        self.failUnless ( t4.getID () not in GR ) 
+        self.failUnless ( t3.getID ()  in GR ) 
+
+        GR.trim (2)
+
+        self.failUnless ( len (GR) == 2 ) 
+        self.failUnless ( t3.getID () not in GR ) 
+
+        # this should not work because there are some 
+        # immutable tiles
+        GR.trim (1)
+
+        self.failUnless ( len (GR) == 2 ) 
+
+
 
 if __name__ == "__main__":
 

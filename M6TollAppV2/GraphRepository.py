@@ -49,15 +49,19 @@ class GraphRepository (dict):
 
         '''
 
-        self.immutableTiles = lstImmutableTiles
+        self.lstImmutableTiles = [str(st) for st in lstImmutableTiles]
         self.accessFrequency = {}
+
 
     def cacheSize ():
 
         '''
-                
+        Currently returns the number of tiles.
+  
+        May be modified to reflect the actual memory overhead of each tile.
         '''
-        pass
+
+        return len ( self )
  
     def __getitem__(self, key):
 
@@ -71,7 +75,7 @@ class GraphRepository (dict):
 
         try:
             val = dict.__getitem__(self, keyStr )
-        except KeyError:
+        except KeyError as e:
             import traceback, utils
             utils.logError ( traceback.format_exc() )
             raise AppError (utils.timestampStr (), 'GraphRepository', \
@@ -90,14 +94,38 @@ class GraphRepository (dict):
         '''
 
         dict.__setitem__(self, str(key), val)
+        self.accessFrequency.setdefault ( str(key) , 0 ) 
 
-    def trim ():
+    def __delitem__(self, key):
+        keyStr = str (key)
+        self.accessFrequency.pop ( keyStr, None)
+        return dict.__delitem__(self, self.__keytransform__(keyStr))
+
+    def trim (self, maxTiles):
 
         '''
-        Trim the cache back down to size
-        '''
-        pass
 
+        Trim the cache back down to size, by removing the 
+        least used tiles.
+
+        '''
+
+        numTilesToKeep = len ( self.lstImmutableTiles )
+
+        if ( maxTiles < numTilesToKeep) : 
+            return
+
+        availList = [(self.accessFrequency[aKey],aKey,)  \
+                    for aKey in self if aKey not in self.lstImmutableTiles  ]
+
+        sortedKeys = sorted ( availList , reverse=True  ) 
+
+        while ( numTilesToKeep +  len ( sortedKeys ) > maxTiles ):
+
+            print (sortedKeys)
+            poppedKey = sortedKeys.pop () [1]
+            self.pop ( poppedKey, None )
+ 
 class GraphRepositoryFactory (object):
 
     def create (self, objDataStore, lstCoreTiles):
@@ -108,10 +136,11 @@ class GraphRepositoryFactory (object):
  
         '''
  
-        gr = GraphRepository(lstCoreTiles)
+        gr = GraphRepository(lstCoreTiles  )
 
         for thisTile in lstCoreTiles:
             thisGraph = objDataStore.loadEdgeGraphForTile ( str ( thisTile ) )
+
             gr [ thisTile ] = thisGraph
 
         return gr

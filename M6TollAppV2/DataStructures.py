@@ -103,4 +103,3 @@ class GISEdge (EdgeCost):
         self.isToll = isToll
 
 
-
