@@ -35,12 +35,24 @@ The key structure in this routing app is a graph G, defined as
                       number of graphs permiited in memory at one time. 
                       Works closely with  GraphRepository.GraphRepository.
 
+Hence with all these tweaks the final graph structure is structured along these lines:
+
+    CompositeGraph   = [{ nodeA:  { nodeB : GISEdge(A-B), nodeC: GISEdge(A-C)  },
+                          nodeB:  { nodeA : GISEdge (B-A)                      },
+                          nodeC:  { nodeC : GISEdge (C-A)                      }
+                        }, 
+                        { nodeD:  { nodeD : GISEdge (D-E), nodeC: GISEdge(D-F) },
+                          nodeE:  { nodeA : GISEdge (E-D)                      },
+                          nodeF:  { nodeC : GISEdge (F-D),                     }
+                        }]
+                          
 
 '''
 
 from heapq import heapify, heappush, heappop
 from GraphRepository import GraphRepository
 from apperror import AppError
+import utils
 
 
 class EdgeCost (object):
@@ -255,20 +267,46 @@ class CompositeGraph (dict):
     def __getitem__(self, key):
 
         '''
-        Handle  case in which a Tile OBJECT is used 
-        Also increment the frequency counter for this tile.
+        Superficially this needs to get the value matching the key in 
+        which every sub graph is being accessed. 
+
+        Matters are slightly more complicated. Consider a basic 
+        graph
+  
+        G = { nodeA:  { nodeB : cost_A-B, nodeC: cost_A-C },
+              nodeB:  { nodeA : cost_B-A                  },
+              nodeC:  { nodeC : cost_C-A                  }
+             }
+
+        1. If CompositeGraph replaces G then "values" are 
+           in fact sub-dictionaries
+
+        2. It is possible for two graphs to contain 'from' nodes
+           that link to the same 'to node. To handle this, it is
+           necessary to return a graph that includes the values of
+           all child graphs.
 
         '''
  
         lstAvailableGraphs = []
         lstAvailableGraphs = self.GraphRepository.getGraphs ()
 
-        for eachGraph in lstAvailableGraphs:
-            if key in eachGraph:
-                return eachGraph[key]
+        lstResults = []
 
-        raise AppError (utils.timestampStr (), 'DataStructures.DynamicGraph', \
-                        'Failed to find key "%s" in DynamicGraph:' %(key), e )
+        for eachGraph in lstAvailableGraphs:
+            # create a list of (key,val) tuples
+            if key in eachGraph:
+                dictResult = eachGraph[key]
+                print (dictResult)
+                lstResults =lstResults + [(key,val) for key,val in dictResult.iteritems()]
+
+        if len (lstResults) == 0:
+            raise AppError (utils.timestampStr (), 'DataStructures.DynamicGraph', \
+                            'Failed to find key "%s" in CompositeGraph:' %(key), 'AppError' )
+
+        # note: the next line will flatten out any duplicates.
+        print ("for key %s, return %s" %(key, dict ( lstResults )))
+        return dict ( lstResults ) # gen. dict from key/val pairs
 
     def __setitem__(self, key, val):
         '''
