@@ -1,0 +1,9 @@
+==========
+DataStore
+==========
+- Connection pool or manager for s3. Avoid Stale connections
+
+Check the S3 access time for an Edge WKT fetch
+
+
+
