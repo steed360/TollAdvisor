@@ -21,6 +21,10 @@ The key structure in this routing app is a graph G, defined as
                       Edge. Included up front due at a cost of memory overhead
                       due to the cost of fetching this data over the network.
 
+                      However, smart use of AWS S3 or availability of another 
+                      fast database with fast 'reads' (on 200,000 +/- keys) may 
+                      eliminate the need for this class.
+
 - priority_dict       Subclass of dictionary providing a fast ordering on each   
                       (value) item in the dictionary
                       
