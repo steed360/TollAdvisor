@@ -2,7 +2,6 @@
 '''
 
 Define data structures required for the shortest path algorithms.
-The following classes are defined:
 
 The key structure in this routing app is a graph G, defined as   
 
@@ -11,6 +10,8 @@ The key structure in this routing app is a graph G, defined as
           nodeB:  { nodeA : cost_B-A                  },
           nodeC:  { nodeC : cost_C-A                  }
         }
+
+The following classes are defined in this module:
 
 
 - EdgeCost            Abstract base class returning a comparable value 
