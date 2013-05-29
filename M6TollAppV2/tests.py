@@ -485,6 +485,9 @@ class Test_CompositeGraph (unittest.TestCase):
         self.failUnless ( len (edgeList) == 3 ) 
         print ( list ( [str(x) for x in edgeList] ))
 
+from gis import Locator
+from gis import Tile
+
 class Test_gisLocator (unittest.TestCase):
 
     def setUp(self):
@@ -497,7 +500,43 @@ class Test_gisLocator (unittest.TestCase):
 
         '''
         
+        t = Tile (-1,2)
+        self.failUnless ( t == Locator.getTileFromCoords ( -1, 2 ) )
+
+        t = Tile (1,-2)
+        self.failUnless ( t == Locator.getTileFromCoords ( 1, -2 ) )
+
+    def test_locateEdgeInGraph (self):
+
+        '''
         
+        '''
+        e1  = GISEdge  (edgeID = 'A-B',   sourceNode = 'A', 
+                        targetNode = 'B',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(1 1)",  
+                        isToll = False )
+
+        e2  = GISEdge  (edgeID = 'B-A',   sourceNode = 'B', 
+                        targetNode = 'A',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(2 2)",  
+                        isToll = False )
+
+        e3   = GISEdge  (edgeID = 'A-C',   sourceNode = 'A', 
+                        targetNode = 'C',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(3 3)",  
+                        isToll = False )
+
+        G =  {'a':{ 'b': e1, 'c': e2 }, 
+              'b':{ 'a': e3 }
+             }
+
+        
+        self.failUnless ( e3 == Locator.closestEdgeInGraph ( Tile (3, 4), G ) )
+
+
 
 if __name__ == "__main__":
 
