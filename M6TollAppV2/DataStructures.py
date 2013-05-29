@@ -37,15 +37,17 @@ The key structure in this routing app is a graph G, defined as
 
 Hence with all these tweaks the final graph structure is structured along these lines:
 
-    CompositeGraph   = [{ nodeA:  { nodeB : GISEdge(A-B), nodeC: GISEdge(A-C)  },
-                          nodeB:  { nodeA : GISEdge (B-A)                      },
-                          nodeC:  { nodeC : GISEdge (C-A)                      }
+    CompositeGraph   = [{ 'a':  { 'b' : GISEdge(A-B), 'c': GISEdge(A-C)  },
+                          'b':  { 'a' : GISEdge (B-A)                      },
+                          'c':  { 'a' : GISEdge (B-A)                      },
+
                         }, 
-                        { nodeD:  { nodeD : GISEdge (D-E), nodeC: GISEdge(D-F) },
-                          nodeE:  { nodeA : GISEdge (E-D)                      },
-                          nodeF:  { nodeC : GISEdge (F-D),                     }
+                        { 'c':  { 'd' : GISEdge (D-E) },
+                          'd':  { 'c' : GISEdge (E-D)                      },
                         }]
-                          
+
+Note that nodeC appears in both graphs. Important, this should hold:
+CompositeGraph ['c'] = { 'a' : COST1 , 'd': COST2  }
 
 '''
 
@@ -131,6 +133,10 @@ class GISEdge (EdgeCost):
         self.CentroidY     = float (tmpList[1] )
 
         self.isToll = isToll
+
+    def __str__(self):
+        return "Edge from %s to %s at cost %s " %(self.sourceNode,self.targetNode,\
+                                                  self.edgeCost )
 
 
 # source/credits:
@@ -296,17 +302,17 @@ class CompositeGraph (dict):
         for eachGraph in lstAvailableGraphs:
             # create a list of (key,val) tuples
             if key in eachGraph:
+
                 dictResult = eachGraph[key]
-                print (dictResult)
-                lstResults =lstResults + [(key,val) for key,val in dictResult.iteritems()]
+                lstResults =lstResults + \
+                           [(akey,val) for akey,val in dictResult.iteritems()]
 
         if len (lstResults) == 0:
             raise AppError (utils.timestampStr (), 'DataStructures.DynamicGraph', \
                             'Failed to find key "%s" in CompositeGraph:' %(key), 'AppError' )
 
         # note: the next line will flatten out any duplicates.
-        print ("for key %s, return %s" %(key, dict ( lstResults )))
-        return dict ( lstResults ) # gen. dict from key/val pairs
+        return dict ( lstResults ) # generate dict from key/val pairs
 
     def __setitem__(self, key, val):
         '''

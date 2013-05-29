@@ -361,7 +361,7 @@ class Test_CompositeGraph (unittest.TestCase):
 
         self.graph_1_1 =  {'a':{ 'b': 1, 'c': 1 }, 
                            'b':{ 'a': 1 },
-                           'c':{ 'c': 1 }
+                           'c':{ 'a': 1 }
                           }
 
         self.graph_2_2 =  {'c':{ 'a': 1, 'd': 1 }, 
@@ -388,19 +388,108 @@ class Test_CompositeGraph (unittest.TestCase):
 
         CG = CompositeGraph ( GR )
 
-        for key in self.graph_1_1:
-            self.failUnless ( self.graph_1_1 [key] == CG[key]     )
+        # test values for key 'a', across the Composite Graph
+        resDict = CG ['a']
+        self.failUnless ( resDict ['b']== 1 )  
+        self.failUnless ( resDict ['c']== 1 )  
+        self.failUnless ( len ( resDict ) == 2  )  
 
-        for key in self.graph_2_2:
-            self.failUnless ( self.graph_2_2 [key] == CG[key]     )
+        resDict = CG ['b']
+        self.failUnless ( resDict ['a']== 1 )  
+        self.failUnless ( len ( resDict ) == 1  )  
 
+        resDict = CG ['c']
+        self.failUnless ( resDict ['a']== 1 )  
+        self.failUnless ( resDict ['d']== 1 )  
+        self.failUnless ( len ( resDict ) == 2  )  
 
+        resDict = CG ['d']
+        self.failUnless ( resDict ['c']== 1 )  
+        self.failUnless ( len ( resDict ) == 1  )  
+
+from algorithms import shortestPath2
+from DataStructures import GISEdge
+from GraphRepository import GraphRepository
+
+class Test_CompositeGraph (unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def testShortestPath1 (self):
+
+        '''
+        Simple routing test
+
+        '''
+        e_A_B= GISEdge  (edgeID = 'A-B',   sourceNode = 'A', 
+                        targetNode = 'B',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(0.2 0.2)",  
+                        isToll = False )
+
+        e_B_A= GISEdge  (edgeID = 'B-A',   sourceNode = 'B', 
+                        targetNode = 'A',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(0.2 0.2)",  
+                        isToll = False )
+
+        e_A_C= GISEdge  (edgeID = 'A-C',   sourceNode = 'A', 
+                        targetNode = 'C',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(0.2 0.2)",  
+                        isToll = False )
+
+        e_C_A= GISEdge  (edgeID = 'C-A',   sourceNode = 'C', 
+                        targetNode = 'A',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(0.2 0.2)",  
+                        isToll = False )
+
+        e_C_D= GISEdge  (edgeID = 'C-D',   sourceNode = 'C', 
+                        targetNode = 'D',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(0.2 0.2)",  
+                        isToll = False )
+
+        e_D_C= GISEdge  (edgeID = 'D-C',   sourceNode = 'D', 
+                        targetNode = 'C',  WKT = None,        
+                        lengthKM = 1,      edgeCost = 1, 
+                        centroidWKT = "POINT(0.2 0.2)",  
+                        isToll = False )
+
+        print e_A_B
+
+        anEdge = EdgeCost (1)
+        graph_1_1 =  {'a':{ 'b': e_A_B, 'c': e_A_C }, 
+                      'b':{ 'a': e_B_A },
+                      'c':{ 'a': e_C_A }
+                     }
+
+        graph_2_2 =  {'c':{ 'a': e_C_A, 'd': e_C_D }, 
+                      'd':{ 'c': e_D_C },
+                      'a':{ 'c': e_A_C }
+                      }
+
+        t1 = Tile ( 1, 0 ) 
+        t2 = Tile ( 1, 1 ) 
+        
+        GR = GraphRepository ([])
+
+        GR[t1] = graph_1_1
+        GR[t2] = graph_2_2
+
+        CG = CompositeGraph ( GR )
+
+        edgeList= shortestPath2 ( CG, 'b', 'd' )
+        self.failUnless ( len (edgeList) == 3 ) 
+        print ( list ( [str(x) for x in edgeList] ))
 
 if __name__ == "__main__":
 
     import unittest
 #    suites = [unittest.defaultTestLoader.loadTestsFromName(name) for name in module_strings]
- 
+
     suites = unittest.defaultTestLoader.loadTestsFromName ("tests")
     testSuite = unittest.TestSuite(suites)
     text_runner = unittest.TextTestRunner().run(testSuite)
