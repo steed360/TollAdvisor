@@ -1,22 +1,16 @@
 
 '''
 
-Module to assist with the spatial elements of the application. The following
-classes are defined:
+Module to assist with the basic spatial requirements of the app.
+
+The following classes are defined:
 
 Tile          :  Reference to a geographical area. Useful in spatially organizing a 
                  large spatial dataset (into separate 'tiles'). A 2 dimensional 
                  co-ordinate system is assumed, but unspecified. 
 
-TODO
-TileFeature   :  Provides a simple interface that should be implemented by any  
-                 object that, in spatial terms, is contained within a Tile
-
 Locator       :  Contains logic for matching co-ordinates to Tiles and for matching
                  a co-ordinate to TileFeature feature within a Tile.
-
-Utils         :  Contains a couple of standard spatial functions likely to be found in a 
-                 GIS package.
 
 '''
 
@@ -60,6 +54,7 @@ class Tile ():
         self.x1 = x1
         self.y1 = y1
 
+
     def getID (self):
 
         '''
@@ -83,5 +78,65 @@ class Tile ():
         return  "%s.%s" %( xVal, yVal ) 
 
 
+class Locator ():
+
+    '''
+    
+    Very basic GIS-ish search operations
+    
+    ''' 
+
+    @classmethod
+    def getTileFromCoords (cls, X,Y):
+        '''
+        Find the Tile that contains the Point (X,Y).
+
+        Because each Tile is identified by it's bottom 
+        and left-most points, this is simple.
+        '''
+
+        return Tile ( int (X), int (Y) )
+
+    @classmethod
+    def locateEdgeInGraph (cls, aTile, aGraph ):
+
+        '''
+        @aTile            gis.Tile
+        @aGraph           Graph -see DataStructures 
+                          header docs 
+                          e.g. G = { 'a':{'b':10},{'c':5} etc }
+    
+        '''
+
+        if len ( aGraph ) == 0:
+           raise AppError (utils.timestampStr (), 'gis.Locator.locateEdgeInGraph', \
+                        'Received  empty graph for Tile: %s' %(aTile.getID() ), None  )
+
+        maxDist = 10000000000
+        closestEdge = None
+
+        for i in aGraph.iteritems ():
+            for j in i.iteritems ():
+
+                thisEdge= aGraph[i][j]
+                dist = utils._pythagorasDistance ( X,Y, \
+                                    thisEdge.CentroidX, \
+                                    thisEdge.CentroidY )
+
+                if dist < maxDist:
+                    maxDist = dist
+                    closestEdge = thisEdge
+
+        if closestEdge == None:
+            raise AppError (utils.timestampStr (), 'gis.Locator.locateEdgeInGraph', \
+                        'No match found for Tile: %s' %(aTile.getID() ), None  )
+                
+
+def _pythagorasDistance ( X1, Y1, X2, Y2 ):
+ 
+    side1 = abs( float (Y2) - float (Y1)  )
+    side2 = abs( float (X2) - float (X1)  )
+
+    return math.sqrt ( math.pow ( side1, 2 ) + math.pow ( side2, 2 ) ) 
 
 

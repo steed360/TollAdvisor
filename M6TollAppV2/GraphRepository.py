@@ -116,6 +116,8 @@ class GraphRepository (dict):
         Return a list of all of the graphs currently held in the repository
         '''
 
+        # return self.itervalues()
+
         lst= []
         try:
             for key,val in self.iteritems ():

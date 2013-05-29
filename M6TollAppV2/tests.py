@@ -485,6 +485,20 @@ class Test_CompositeGraph (unittest.TestCase):
         self.failUnless ( len (edgeList) == 3 ) 
         print ( list ( [str(x) for x in edgeList] ))
 
+class Test_gisLocator (unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_getTileFromCoords1 (self):
+
+        '''
+        Too simple really...
+
+        '''
+        
+        
+
 if __name__ == "__main__":
 
     import unittest
