@@ -511,10 +511,11 @@ class Test_gisLocator (unittest.TestCase):
         '''
         
         '''
+
         e1  = GISEdge  (edgeID = 'A-B',   sourceNode = 'A', 
                         targetNode = 'B',  WKT = None,        
                         lengthKM = 1,      edgeCost = 1, 
-                        centroidWKT = "POINT(1 1)",  
+                        centroidWKT = "POINT(3.1 4.1)",  
                         isToll = False )
 
         e2  = GISEdge  (edgeID = 'B-A',   sourceNode = 'B', 
@@ -533,10 +534,24 @@ class Test_gisLocator (unittest.TestCase):
               'b':{ 'a': e3 }
              }
 
+        self.failUnless ( e1 == Locator.closestEdgeInGraph ( Tile (3, 4), G ) )
+
+    def test_getTileBoundingSet (self):
+
+        '''
+        test a range of positive and negative co-ordinates
+        '''
+
+        tileList = Locator.getTileBoundingSet ( 1, 1, 2, 2 ) 
+
+        self.failUnless  ( len ( tileList) == 2  ) 
+        self.failUnless  ( Tile ( 1,1 ) in tileList ) 
+        self.failUnless  ( Tile ( 2,2 ) in tileList ) 
         
-        self.failUnless ( e3 == Locator.closestEdgeInGraph ( Tile (3, 4), G ) )
+        tileList = Locator.getTileBoundingSet ( -2, 2, 1, 3 ) 
 
-
+        y =  [ x.getID() for x in tileList ] 
+        print y
 
 if __name__ == "__main__":
 

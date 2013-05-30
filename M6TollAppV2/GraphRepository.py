@@ -1,4 +1,3 @@
-
 '''
 
 This module is responsible for caching all sub Graphs in 
@@ -27,13 +26,12 @@ class GraphRepository (dict):
     The repository caches by default but can be trimmed to all but the 
     most essential and used tiles.
 
-    It is not the job of the repository to seek out requested tiles not 
-    in it.  It is the job of the RoutingFacade to poll it and then set 
-    things up correctly.  However, an AppError will be thrown if a 
-    missing subGraph is requested.
-
-    Graph repository implements Observable. In particular it needs to 
-    notify the DynamicGraph when it's data has changed.
+    It is not the job of the repository to seek out requested tiles.
+    Rather the RoutingFacade should poll the repository i.e.:
+    >   tile in GraphRepository 
+    If a tile is not available the RoutingFacade can use the DataStore
+    to download the required tile and then add it to the Repository
+    >  GraphRepository [aTile] = downloadedGraph 
 
     '''
 

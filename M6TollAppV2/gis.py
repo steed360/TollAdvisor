@@ -12,7 +12,10 @@ Tile          :  Reference to a geographical area. Useful in spatially organizin
 Locator       :  Contains logic for matching co-ordinates to Tiles and for matching
                  a co-ordinate to TileFeature feature within a Tile.
 
+Distance function
+
 '''
+import math
 
 class Tile ():
 
@@ -116,7 +119,7 @@ class Locator ():
         closestEdge = None
 
         for i in aGraph.iterkeys ():
-            for thisEdge in (aGraph[i]).iterkeys ():
+            for thisEdge in (aGraph[i]).itervalues ():
 
                 dist = _pythagorasDistance ( aTile.x1,aTile.y1, \
                                     thisEdge.CentroidX, \
@@ -126,10 +129,44 @@ class Locator ():
                     maxDist = dist
                     closestEdge = thisEdge
 
-        if closestEdge == None:
+        if (not closestEdge ):
             raise AppError (utils.timestampStr (), 'gis.Locator.locateEdgeInGraph', \
                         'No match found for Tile: %s' %(aTile.getID() ), None  )
                 
+        return closestEdge
+
+    @classmethod
+    def getTileBoundingSet (cls, X1, Y1, X2, Y2 ):
+    
+        '''
+
+        Bounding Set refers the set of Tile Graphs needed to 
+        route between point 1 and point 2.
+
+        There are a number of way to achieve this, trading off
+        accuracy and speed.  Simplistic/fastest approach used here.  
+        However, some curved fast routes : e.g. M25 (?) may remain
+        unexplored in the route finding.
+
+        The approach taken is to use the equation of a straight 
+        line between the start and end points. Return every tile
+        contained in this line. 
+ 
+        '''
+
+        resultList =[]
+
+        gradient = ( Y2 - Y1 ) / (X2 - X1 ) 
+
+        print gradient
+
+        x = X1 
+        while ( x <= X2 ):
+            y =   gradient * x 
+            resultList +=  [ Locator.getTileFromCoords ( x, y ) ]
+            x = x + 1
+        return resultList
+
 
 def _pythagorasDistance ( X1, Y1, X2, Y2 ):
  
