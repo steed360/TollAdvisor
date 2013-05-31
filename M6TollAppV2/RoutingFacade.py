@@ -12,8 +12,8 @@ purpose of this module is to take this job away from the UI controller.
 from DataStore       import AWS_S3DataStore
 from GraphRepository import GraphRepository
 from DataStructures  import GISEdge, CompositeGraph
-from algorithms      import 
-from gis             import shortestPath2
+from algorithms      import shortestPath2
+from gis             import Locator
 
 findRoute ( X1, Y1, X2, Y2 ):
 
