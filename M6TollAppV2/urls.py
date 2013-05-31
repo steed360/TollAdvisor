@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+import M6TollAppV2.views
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
