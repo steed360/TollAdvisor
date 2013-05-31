@@ -150,7 +150,6 @@ class GenericDataStore (object):
             raise AppError (utils.timestampStr (), 'DataStore', \
                             'loadEdgeGraphForTile',   e )
 
-
         return graph 
 
 
@@ -255,5 +254,4 @@ class TestDataStore (GenericDataStore):
     def _getStringList (self, thisTile):
 
         return self.strList
-
 

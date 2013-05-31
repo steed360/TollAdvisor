@@ -15,6 +15,8 @@ from DataStructures  import GISEdge, CompositeGraph
 from algorithms      import shortestPath2
 from gis             import Locator
 
+
+
 findRoute ( X1, Y1, X2, Y2 ):
 
     '''
@@ -59,10 +61,49 @@ findRoute ( X1, Y1, X2, Y2 ):
         if aTile not in graphRepositoryRef:
             G = AWS_S3DataStore.loadEdgeGraphForTile ( t )
             graphRepositoryRef [t] = G
-
-     
+    
     cg = CompositeGraph ( graphRepositoryRef )
 
     resList = shortestPath ( cg , fromEdge.sourceNode, toEdge.targetNode)
+
+    return  _getJSONResultFromNodesList ( resList )
+
+
+
+def _getJSONResultFromNodesList (edgeList):
+
+    import json
+
+    '''
+
+    @ edgeList : list  DataStructures.GISEdge
+
+    returns a JSON result with keys : 'WKT', 'TIME_HRS', 'DIST_KM'
+
+    ''' 
+    
+    timeHRS = 0
+    distKM  = 0
+    lastNode= None
+    WKT     = None  # Well known text repr of a geometry
+
+    for thisEdge in edgeList:
+
+        timeHRS += thisEdge.getCost ()
+        distKM  += thisEdge.lengthKM
+        WKT = gis._mergeWKT (WKT, thisEdge.WKT )                 
+
+    print "----------------"
+    print "Time : " + str  ( timeHRS) 
+    print "----------------"
+    print "DIST : " + str  ( distKM) 
+    print "----------------"
+
+    resultDict = {}
+    resultDict ['WKT'] = WKT
+    resultDict ['TIME_HRS'] = timeHRS
+    resultDict ['DIST_KM'] = distKM
+
+    return json.dumps ( resultDict )  
 
 

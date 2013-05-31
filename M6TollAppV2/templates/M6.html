@@ -1,0 +1,364 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <link rel="stylesheet" type="text/css" href="/static/map2.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script type='text/javascript' src="http://openlayers.org/api/OpenLayers.js"></script>
+<script>
+
+function searchButtonClicked(strWhich) {
+ 
+    // Hand onClick events for any of the main horizontal menu items
+    // Display the appropriate control panel and update the 
+    // position of the menu "tab"
+
+    $('.menuHeader').each ( function (i) {
+          this.style.borderBottomColor="grey";
+     });
+
+    var headerDIVItem = document.getElementById ( strWhich);
+    headerDIVItem.style.borderBottomColor="transparent";
+
+    var widgetsArray = [".searchWidget",".preferencesWidget", ".resultsWidget" ];
+
+    for (ind in widgetsArray) { 
+        $(widgetsArray [ind]).hide();
+    }
+
+    if    (strWhich == "searchMenu" )
+        $(".searchWidget").show();
+    else if (strWhich == "resultsMenu" )
+         $(".resultsWidget").show();
+    else if (strWhich == "preferencesMenu" ) 
+         $(".preferencesWidget").show();
+}
+
+
+$(document).ready(function(){
+
+    searchButtonClicked ("resultsMenu");
+
+    console.log ("ok. We have started");
+    resultsToggle = 1 ;
+    preferencesWidget = 0 
+    $(".preferencesWidget").hide ();
+    $(".resultsWidget").hide ();
+
+});
+
+    function init () {
+
+        $.ajaxSetup ({cache:false} );
+
+        map = new OpenLayers.Map('map',
+{
+            controls: [
+                new OpenLayers.Control.Navigation(),
+                new OpenLayers.Control.PanZoomBar(),
+                new OpenLayers.Control.Attribution(),
+                new OpenLayers.Control.LayerSwitcher(),
+                new OpenLayers.Control.Permalink(),
+                new OpenLayers.Control.OverviewMap() ],
+            maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+            projection: new OpenLayers.Projection('EPSG:900913'),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: 'm'
+          }
+        );
+
+            //add osm baselayer
+            var osm_layer = new OpenLayers.Layer.OSM();
+
+            map.addLayer ( osm_layer );
+ 
+            var proj = new OpenLayers.Projection("EPSG:4326");
+            var bounds = new OpenLayers.Bounds(-2.19, 52.25, -1.76, 52.8)
+
+//            map.zoomToMaxExtent();
+
+            map.setOptions({restrictedExtent: bounds.transform(proj, map.getProjectionObject())});
+
+//            map.zoomTo(9);
+
+            var pointsLayer = new OpenLayers.Layer.Vector("pointsLayer", {
+                              maxExtent: bounds,
+                              style: {externalGraphic: 'http://www.openlayers.org/dev/img/marker.png',
+                                     graphicWidth: 20, graphicHeight: 20}
+                        });
+
+            fromPoint = new OpenLayers.Geometry.Point 
+                                       (-243789.68483, 6845455.50251);
+
+            var fromPointFeature = new OpenLayers.Feature.Vector ( 
+                                       fromPoint, {name:"fromPoint"} );
+
+            toPoint = new OpenLayers.Geometry.Point 
+                                      (-195922.30379, 6946088.67940);
+
+            var toPointFeature = new OpenLayers.Feature.Vector ( 
+                                       toPoint, {name:"toPoint"} );
+
+            pointsLayer.addFeatures ([fromPointFeature, toPointFeature]);
+            map.addLayer(pointsLayer);
+
+            // Routes Layer
+                
+            var routeLayer = new OpenLayers.Layer.Vector();
+
+            var layer_style = OpenLayers.Util.extend({},OpenLayers.Feature.Vector.style['default']);
+
+            layer_style.fillColor = "#FF0000";
+            layer_style.strokeColor = "#FF0000";
+            layer_style.strokeWidth = 3;
+            layer_style.fillOpacity = 1;
+
+            routeLayer.style = layer_style;
+            routeLayer.id = "routeLayer";
+            routeLayer.name = "routeLayer";
+
+            map.addLayer(routeLayer);
+
+            // Some more map controls
+
+            dragControl = new OpenLayers.Control.DragFeature
+                          (pointsLayer,{onComplete: reRoute} );
+
+            map.addControls([new OpenLayers.Control.ScaleLine(),
+                             new OpenLayers.Control.MousePosition({}),
+                             dragControl
+                            ]);
+
+            dragControl.activate ();
+
+//            if(!map.getCenter()){
+//                map.zoomToMaxExtent();
+//            };
+
+            map.zoomToExtent(pointsLayer.getDataExtent());
+
+
+    }; // function init()
+
+
+    function reRoute () {
+
+        console.log ('Point 1');
+        console.log (fromPoint.x);
+        console.log (fromPoint.y);
+
+        console.log ('Point 2');
+        console.log (toPoint.x);
+        console.log (toPoint.y);
+
+        var p1 = new OpenLayers.Geometry.Point (fromPoint.x, fromPoint.y).transform(new 
+              OpenLayers.Projection("EPSG:900913"), new 
+              OpenLayers.Projection("EPSG:4326"));
+
+        var p2 = new OpenLayers.Geometry.Point (toPoint.x, toPoint.y).transform(new 
+              OpenLayers.Projection("EPSG:900913"), new 
+              OpenLayers.Projection("EPSG:4326"));
+
+        ajaxroute (p1.x, p1.y,p2.x,p2.y);
+
+     }; // function reRoute
+
+    function updateResults (time, dist) {
+
+        // @time decimal in hrs
+        // @dist km
+
+        var timeN    = parseFloat ( time )  ;
+        var timeHRS  = Math.round ( timeN );
+
+        var timeMINS =  Math.abs (Math.round (60  * ( timeHRS - timeN   )));
+        var timeStr = "";
+
+        if (timeHRS == 0) 
+            timeStr = timeMINS + "m.";
+        else  {
+            var hrTXT = (timeHRS == 0)?" hr.":" hrs ";
+            timeStr = timeHRS + hrTXT + timeMINS + "m.";
+        }
+        timeDiv   = document.getElementById ("Time_No_Toll");
+        timeDiv.innerHTML = timeStr;
+
+        kmDiv   = document.getElementById ("Dist_No_Toll");
+        kmDiv.innerHTML = Math.round (dist / 1.6) + " miles";
+
+        speedDiv   = document.getElementById ("Speed_No_Toll"); 
+
+        speedDiv.innerHTML = Math.round  ( (dist / timeN)  / 1.6 ) + "mph";
+
+        searchButtonClicked ("resultsMenu");
+
+    }
+
+    function reDrawRoute (JSONMsg) {
+
+        routeLayer = map.getLayersByName ( "routeLayer")[0];
+        routeLayer.destroyFeatures();
+
+        var arr_from_json = JSON.parse( JSONMsg )
+        var WKTString = arr_from_json ["WKT"];
+
+        var timeHRS = arr_from_json ["TIME_HRS"];
+        var distKM = arr_from_json ["DIST_KM"];
+      
+        var wkt = new OpenLayers.Format.WKT();
+
+        routeLayer.addFeatures([wkt.read(WKTString)]);
+        routeLayer.redraw()
+
+        updateResults ( timeHRS, distKM);
+        document.getElementById("loading").style.display ="none";
+
+
+
+//        map.zoomToExtent(routeLayer.getDataExtent());
+    }
+
+    function ajaxroute(fromX, fromY, toX, toY){
+
+        document.getElementById("loading").style.display ="block";
+        console.log (fromPoint.x);
+        console.log (fromPoint.y);
+
+        urlTxt = "http://{{server}}/route/"+fromX+"/"+fromY+"/"+toX+"/"+toY;
+
+        console.log ("***");
+        console.log (urlTxt);
+            
+        try {
+            $.ajax({
+                url:urlTxt,
+                type: "GET",
+                success: function(msg) {
+                    reDrawRoute(msg);
+//                    console.log ( msg );
+                }
+            })
+            return false;
+        }
+        catch (err) {
+            txt="Sorry: There was an error on this page.\n\n";
+            alert(txt);
+            return false
+        }
+
+        document.getElementById("loading").style.display ="block";
+
+    };//function
+
+</script>
+</head>
+
+<body onload="init()">
+
+<div class="mainArea">
+  <div class="topMenu">
+  </div>
+  <div class="workArea">
+    <div class="controlArea">
+
+      <div id="searchMenu" class="menuHeader" 
+               onclick="searchButtonClicked('searchMenu');">Search</div>
+      <div id="preferencesMenu" class="menuHeader" 
+               onclick="searchButtonClicked('preferencesMenu');">Preferences</div>
+      <div id="resultsMenu" class="menuHeader" 
+               onclick="searchButtonClicked('resultsMenu');">Results</div>
+     <div id="None" class="menuSpacer">&nbsp;</div>
+
+      <div class="searchWidget" visible="false">
+          From <br>
+          <input type="text" > </input>
+          <br>
+          To <br>
+          <input type="text" > </input>
+          Go
+      </div>
+
+      <div class="preferencesWidget" >
+      <br><br><br>
+      your preferences
+      </div>
+
+      <div class="resultsWidget" >
+        <br><Br>
+        <table border=0>
+          <tr>
+            <td>
+            <strong>M6 Toll</strong>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <strong>Use</strong>
+            </td>
+           <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <strong>Avoid</strong>
+            </td>
+          </tr>
+
+
+          <tr>
+            <td>
+            <strong>Time</strong>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <div id="Time_Toll">1 hr 20 minutes</div>
+            </td>
+           <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <div id="Time_No_Toll">1 hr 20 minutes</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+            <strong>Distance</strong>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <div id="Dist_Toll">320 km</div>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <div id="Dist_No_Toll">320 km</div>
+            </td>
+
+          <tr>
+            <td>
+            <strong>Speed</strong>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <div id="Speed_Toll"></div>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+            <div id="Speed_No_Toll"></div>
+            </td>
+
+
+          </tr>
+       </table>
+      </div>
+    </div>
+
+
+    <div class="mapArea">
+      <div id="map">
+      </div>
+   </div>
+</div>
+
+    <div id="loading">
+        <img src="/static/ajax-loader.gif" />
+    </div>
+
+</body>
+</html>

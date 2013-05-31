@@ -1,0 +1,247 @@
+BODY
+{
+  font-family:arial;
+  font-size:0.7em;
+}
+
+.mainArea {
+  position : absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0px auto;
+  padding: 10px;
+  border:  10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.topMenu {
+  position: relative;
+  top: 0px;none
+  left: 0px;
+  background-color: none;
+  width: 100%;
+  height: 50px;
+  margin: 0px auto;
+  padding: 0px;
+  border:  10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.workArea {
+  overflow: auto;
+  position: relative;
+  width : 100%;
+  height: 90%;
+//  margin-top: 10px;
+  padding: 1px;
+  background-color: ;
+//  background-color: none;
+  border: solid white 2px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.controlArea{
+ cursor: pointer;
+  position: relative;
+  float: left;
+  width : 300px;
+//  height: 100px;
+//  margin-top: 10px;
+  padding: 10px;
+  background-color: none;
+  border: solid white 1px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  overflow: hidden;
+}
+
+.mapArea{
+  position:absolute;
+  overflow: auto;
+//    left=0px;
+    display:inline-block;
+//  margin-left: 300px;
+  width : 100%;
+  height: 100%;
+//  margin-top: 10px;
+  background-color: none;
+  padding: 10px;
+  background-color: none;
+  border: solid white 1px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.menuHeader {
+    float:left;
+    text-align:center;
+    border-radius:0px;
+    -moz-border-radius:0px;
+    border-style:solid;
+    border-width: 5px;
+    position:relative;
+    width: 70px;
+    height: 100%;
+    background-color:none;
+    margin: 0px auto;
+    padding: 1px;
+    border: solid grey 1px;
+    -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.menuSpacer {
+    float:left;
+    border-radius:0px;
+    -moz-border-radius:0px;
+    border-style:solid;
+    border-width: 5px;
+    position:relative;
+    width: 30px;
+    height: 100%;
+    background-color:none;
+    margin: 0px auto;
+    padding: 1.5px;
+    border: transparent;
+    border-bottom: 1px solid grey;
+    -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+
+#wrapper {
+    width: 100px;
+    border: 1px solid black;
+    overflow: hidden; /* will contain if #first is longer than #second */
+}
+#first {
+    width: 100px;
+    float:left; /* add this */
+    border: 1px solid red;
+}
+#second {
+    border: 1px solid green;
+    overflow: hidden; /* if you don't want #second to wrap below #first */
+}
+
+
+.searchWidget {
+  float:left;
+  position:relative;
+  left:0px;
+  width: 50px;
+   height:100px;
+  background-color:none;
+  margin: 0px auto;
+  padding: 10px;
+  border: solid transparent 1px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.preferencesWidget {
+  float:left;
+  position:relative;
+  width: 200px;
+  height:150px;
+  background-color:transparent;
+  margin: 0px auto;
+  padding: 1px;
+  border: solid transparent 1px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.resultsWidget {
+  float: left;
+  position:relative;
+  width: 100%;
+  height:150px;
+  background-color:transparent;
+  margin: 0px auto;
+  padding: 1px;
+  border: solid transparent 1px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/*
+---------------------------------------------------------
+*/
+
+root { 
+    display: block;
+}
+
+body
+{
+    width:850px;
+}
+
+#controls
+{
+    width:600px;
+    float: bottom;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    border-style:solid;
+    border-width:2px;
+    border-color:#aaaaaa;
+    padding:5px;
+}
+
+#map
+{
+    width:100%;
+    height:100%;
+    position: relative;
+}
+
+#mapparent
+{
+    border-radius:10px;
+    -moz-border-radius:10px;
+    border-style:solid;
+    border-width:2px;
+    border-color:#aaaaaa;
+    padding:5px;
+    width:600px;
+    display:inline-block;
+}
+
+#loading
+{
+    position:fixed;
+    background-color:#ffffff;
+    width: 50px;
+    height:50px;
+    top:150px;
+    left:250px;
+    text-align:center;
+    z-index:5;
+    padding: 20px;
+    display:none;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    border-style:solid;
+    border-width:2px;
+    border-color:#aaaaaa;
+}
+
+#demo-frame > div.demo { 
+  padding: 500px !important; 
+}
+
