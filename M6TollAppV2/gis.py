@@ -12,7 +12,11 @@ Tile          :  Reference to a geographical area. Useful in spatially organizin
 Locator       :  Contains logic for matching co-ordinates to Tiles and for matching
                  a co-ordinate to TileFeature feature within a Tile.
 
-Distance function
+Also, module functions:
+
+_pythagorasDistance               
+
+MergeWKT          Adds two or more LINESTRINGs together to produce a MULTILINESTRING
 
 '''
 import math
@@ -143,29 +147,28 @@ class Locator ():
         Bounding Set refers the set of Tile Graphs needed to 
         route between point 1 and point 2.
 
-        There are a number of way to achieve this, trading off
-        accuracy and speed.  Simplistic/fastest approach used here.  
-        However, some curved fast routes : e.g. M25 (?) may remain
-        unexplored in the route finding.
 
-        The approach taken is to use the equation of a straight 
-        line between the start and end points. Return every tile
-        contained in this line. 
- 
         '''
 
+        # Return a limited set of Edges likely to form a between 
+        # the two points
+
+        minX = min (X1, X2 )
+        maxX = max (X1, X2 )
+
+        minY = min (Y1, Y2 )
+        maxY = max (Y1, Y2 )
+
+        xRange = range ( int (minX), int(maxX) + 1 )
+        yRange = range ( int (minY), int(maxY) + 1 )
+
         resultList =[]
+        for x in xRange:
+            for y in yRange:
+                resultList += [Tile (x,y)]
 
-        gradient = ( Y2 - Y1 ) / (X2 - X1 ) 
-
-        print gradient
-
-        x = X1 
-        while ( x <= X2 ):
-            y =   gradient * x 
-            resultList +=  [ Locator.getTileFromCoords ( x, y ) ]
-            x = x + 1
         return resultList
+
 
 
 def _pythagorasDistance ( X1, Y1, X2, Y2 ):
@@ -174,6 +177,5 @@ def _pythagorasDistance ( X1, Y1, X2, Y2 ):
     side2 = abs( float (X2) - float (X1)  )
 
     return math.sqrt ( math.pow ( side1, 2 ) + math.pow ( side2, 2 ) ) 
-
 
 

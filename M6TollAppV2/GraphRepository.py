@@ -11,11 +11,10 @@ to access the singleton.
 from gis import Tile
 from apperror import AppError
 
-def getGraphRepository ():
-    pass
+aGraphRepository = GraphRepository ()
 
-def setGraphRepository (inRepository):
-    pass
+def getGraphRepository ():
+    return aGraphRepository
 
 class GraphRepository (dict):
 

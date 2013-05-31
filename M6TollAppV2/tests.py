@@ -544,11 +544,10 @@ class Test_gisLocator (unittest.TestCase):
 
         tileList = Locator.getTileBoundingSet ( 1, 1, 2, 2 ) 
 
-        self.failUnless  ( len ( tileList) == 2  ) 
-        self.failUnless  ( Tile ( 1,1 ) in tileList ) 
-        self.failUnless  ( Tile ( 2,2 ) in tileList ) 
-        
-        tileList = Locator.getTileBoundingSet ( -2, 2, 1, 3 ) 
+        y =  [ x.getID() for x in tileList ] 
+
+        print y
+        tileList = Locator.getTileBoundingSet ( -2, 2, 3, 1 ) 
 
         y =  [ x.getID() for x in tileList ] 
         print y
