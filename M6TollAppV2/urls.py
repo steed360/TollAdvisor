@@ -5,13 +5,11 @@ from django.conf.urls import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'M6TollAppV2.views.home', name='home'),
-    # url(r'^M6TollAppV2/', include('M6TollAppV2.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    ( r'^init/$', M6TollAppV2.views.init),
+    ( r'^map/$', M6TollAppV2.views.showMap),
+    ( r'^route/(?P<fromX>.+)/(?P<fromY>.+)/(?P<toX>.+)/(?P<toY>.+)/$', M6TollAppV2.views.getRoute),
+    ( r'^route2/(\d+)/(\d+)/(\d+)/(\d+)/$', M6TollAppV2.views.getRoute),
 )
+
+
+
