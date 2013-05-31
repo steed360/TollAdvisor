@@ -41,7 +41,6 @@ findRoute ( X1, Y1, X2, Y2 ):
 
     fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
 
-
     toTile = Locator.getTileFromCoords ( X2, Y2 )
     if fromTile not in graphRepositoryRef:
         toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
@@ -58,7 +57,7 @@ findRoute ( X1, Y1, X2, Y2 ):
 
     for aTile in tileSet:
         if aTile not in graphRepositoryRef:
-            G = self.TestDatastore.loadEdgeGraphForTile ( t )
+            G = AWS_S3DataStore.loadEdgeGraphForTile ( t )
             graphRepositoryRef [t] = G
 
      
