@@ -66,4 +66,3 @@ findRoute ( X1, Y1, X2, Y2 ):
     resList = shortestPath ( cg , fromEdge.sourceNode, toEdge.targetNode)
 
 
-
