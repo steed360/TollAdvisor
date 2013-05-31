@@ -33,7 +33,7 @@ def findRoute ( X1, Y1, X2, Y2 ):
     '''
 
     graphRepositoryRef = GraphRepository.getGraphRepository ()
-
+    dataStore = AWS_S3DataStore ()
     # identify the roads 
     fromTile = Locator.getTileFromCoords ( X1, Y1 )
 
@@ -41,7 +41,7 @@ def findRoute ( X1, Y1, X2, Y2 ):
    
 
     if fromTile.getID() not in graphRepositoryRef:
-        fromTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
+        fromTileGraph = dataStore.loadEdgeGraphForTile ( fromTile ) 
         graphRepositoryRef [toTile] = fromTileGraph
 
     fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
@@ -50,7 +50,7 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     toTile = Locator.getTileFromCoords ( X2, Y2 )
     if fromTile.getID() not in graphRepositoryRef:
-        toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( toTile ) 
+        toTileGraph = dataStore.loadEdgeGraphForTile ( toTile ) 
         graphRepositoryRef [fromTile] = toTileGraph
 
     fromEdge = Locator.closestEdgeInGraph ( X2, Y2, graphRepositoryRef[toTile]   )
