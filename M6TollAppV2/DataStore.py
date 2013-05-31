@@ -147,6 +147,7 @@ class GenericDataStore (object):
         except (AWSConnectionError, Exception) as e:
             import traceback, utils
             utils.logError ( traceback.format_exc() )
+
             raise AppError (utils.timestampStr (), 'DataStore', \
                             'loadEdgeGraphForTile',   e )
 
@@ -170,7 +171,6 @@ class AWS_S3DataStore (GenericDataStore):
         return self.bucketPrefix + '.' + aTile.getID ()
     
     def _getStringList (self, thisTile):
-
  
         conn = self._getS3Connection ()
 
@@ -189,9 +189,8 @@ class AWS_S3DataStore (GenericDataStore):
         tileID = thisTile.getID ()
         keyRef = None
 
-
         try:
-            keyRef = bucketRef.get_key (tileID)
+            keyRef = bucketRef.get_key ( thisTile.getID ())
             strEdges = keyRef.get_contents_as_string() 
         except (AWSConnectionError, Exception) as e:
             import traceback, utils
@@ -224,7 +223,7 @@ class AWS_S3DataStore (GenericDataStore):
         if 'AWS_SECRET_ACCESS_KEY' in os.environ:
             AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
         else :
-            AWS_SECRET_ACCESS_KEY = "yyy"
+            AWS_SECRET_ACCESS_KEY = "xxx"
 
         try:
             conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)

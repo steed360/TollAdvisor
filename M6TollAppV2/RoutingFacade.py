@@ -12,7 +12,8 @@ purpose of this module is to take this job away from the UI controller.
 from DataStore       import AWS_S3DataStore
 from DataStructures  import GISEdge, CompositeGraph
 from algorithms      import shortestPath2
-from gis             import Locator
+from gis             import Locator, Tile
+import gis
 
 import GraphRepository
 
@@ -36,24 +37,24 @@ def findRoute ( X1, Y1, X2, Y2 ):
     dataStore = AWS_S3DataStore ()
     # identify the roads 
     fromTile = Locator.getTileFromCoords ( X1, Y1 )
-
+  
     print "getting from tile"
-   
 
     if fromTile.getID() not in graphRepositoryRef:
         fromTileGraph = dataStore.loadEdgeGraphForTile ( fromTile ) 
-        graphRepositoryRef [toTile] = fromTileGraph
+        graphRepositoryRef [fromTile] = fromTileGraph
 
     fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
 
     print "getting to tile"
 
     toTile = Locator.getTileFromCoords ( X2, Y2 )
-    if fromTile.getID() not in graphRepositoryRef:
-        toTileGraph = dataStore.loadEdgeGraphForTile ( toTile ) 
-        graphRepositoryRef [fromTile] = toTileGraph
 
-    fromEdge = Locator.closestEdgeInGraph ( X2, Y2, graphRepositoryRef[toTile]   )
+    if toTile.getID() not in graphRepositoryRef:
+        toTileGraph = dataStore.loadEdgeGraphForTile ( toTile ) 
+        graphRepositoryRef [toTile] = toTileGraph
+
+    toEdge = Locator.closestEdgeInGraph ( X2, Y2, graphRepositoryRef[toTile]   )
 
     print "loading tileset"
 
@@ -65,23 +66,19 @@ def findRoute ( X1, Y1, X2, Y2 ):
         return 
 
     for aTile in tileSet:
-
-        print "loading tile %s" %(aTile)
-
-        if aTile not in graphRepositoryRef:
+        if  aTile.getID() not in graphRepositoryRef:
             G = AWS_S3DataStore.loadEdgeGraphForTile ( t )
             graphRepositoryRef [t] = G
     
     cg = CompositeGraph ( graphRepositoryRef )
 
     print "do shortest path"
-    resList = shortestPath ( cg , fromEdge.sourceNode, toEdge.targetNode)
+    resList = shortestPath2 ( cg , fromEdge.sourceNode, toEdge.targetNode)
 
     print "result is " 
     print resList
 
     return  _getJSONResultFromNodesList ( resList )
-
 
 
 def _getJSONResultFromNodesList (edgeList):
@@ -105,7 +102,7 @@ def _getJSONResultFromNodesList (edgeList):
 
         timeHRS += thisEdge.getCost ()
         distKM  += thisEdge.lengthKM
-        WKT = gis._mergeWKT (WKT, thisEdge.WKT )                 
+        WKT = gis.mergeWKT (WKT, thisEdge.WKT )                 
 
     print "----------------"
     print "Time : " + str  ( timeHRS) 

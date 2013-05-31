@@ -179,3 +179,21 @@ def _pythagorasDistance ( X1, Y1, X2, Y2 ):
     return math.sqrt ( math.pow ( side1, 2 ) + math.pow ( side2, 2 ) ) 
 
 
+
+def mergeWKT ( firstWKT , secondWKT ): 
+  def extractCoords( inWKT ):
+
+    if inWKT[0:len('LINESTRING')] == "LINESTRING":
+      return inWKT [ len ('LINESTRING') : ]
+
+    if inWKT[0:len('MULTILINESTRING(') ] == "MULTILINESTRING(":
+      return inWKT [ len ("MULTILINESTRING(") : -1 ]
+
+  if firstWKT  == None: return secondWKT
+  if secondWKT == None: return firstWKT
+
+  return  "MULTILINESTRING(" + \
+           extractCoords ( secondWKT)  + ',' + \
+           extractCoords (firstWKT) + ")"
+
+

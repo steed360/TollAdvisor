@@ -566,9 +566,9 @@ class Test_gisLocator (unittest.TestCase):
 
         '''
         
-        result = RoutingFacade.findRoute ( -1.0001, 50.0001 , -1.900000, 50.900001 )
-    
-
+        result = RoutingFacade.findRoute ( -1.0001, 51.0001 , -0.900000, 51.900001 )
+        result = RoutingFacade.findRoute ( -1.0001, 51.0001 , -0.900000, 51.900001 )
+        result = RoutingFacade.findRoute ( -1.0001, 51.0001 , -0.900000, 51.900001 )
 
 
 if __name__ == "__main__":
