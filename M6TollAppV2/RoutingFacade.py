@@ -47,7 +47,7 @@ findRoute ( X1, Y1, X2, Y2 ):
         toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
         graphRepositoryRef [fromTile] = toTileGraph
 
-    fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
+    fromEdge = Locator.closestEdgeInGraph ( X2, Y2, graphRepositoryRef[fromTile]   )
 
     tileSet = Locator.getTileBoundingSet ( X1, Y1, X2, Y2 )
 
