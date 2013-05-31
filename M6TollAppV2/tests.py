@@ -534,7 +534,7 @@ class Test_gisLocator (unittest.TestCase):
               'b':{ 'a': e3 }
              }
 
-        self.failUnless ( e1 == Locator.closestEdgeInGraph ( Tile (3, 4), G ) )
+        self.failUnless ( e1 == Locator.closestEdgeInGraph ( 3, 4, G ) )
 
     def test_getTileBoundingSet (self):
 

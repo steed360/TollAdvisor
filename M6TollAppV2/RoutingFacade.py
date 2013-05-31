@@ -20,6 +20,7 @@ findRoute ( X1, Y1, X2, Y2 ):
     '''
 
     Find a route between Two Points.  This involves:  
+
     1. Find the closest road to start/end locations
     2. Ensure that there is a complete network between
        the two points
@@ -33,17 +34,26 @@ findRoute ( X1, Y1, X2, Y2 ):
 
     # identify the roads 
     fromTile = Locator.getTileFromCoords ( X1, Y1 )
-    if fromTile not in graphRepositoryRef:
-        fromTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
 
-    toTile = Locator.getTileFromCoords ( X2, Y2 )
     if toTile not in graphRepositoryRef:
         toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( toTile ) 
-     
+        graphRepositoryRef [toTile] = toTileGraph
+
+    fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
+
+
+    toTile = Locator.getTileFromCoords ( X2, Y2 )
+    if fromTile not in graphRepositoryRef:
+        toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
+        graphRepositoryRef [fromTile] = toTileGraph
+
+    fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
+
     tileSet = Locator.getTileBoundingSet ( X1, Y1, X2, Y2 )
 
-    if len ( tileSet ) + len ( graphRepositoryRef ) > 10:
-        print "Memory size exceeded"
+    if len ( tileSet ) + len ( graphRepositoryRef ) > 8:
+        print "Memory allowance exceeded"
+        #TODO 
         return 
 
     for aTile in tileSet:
@@ -54,7 +64,7 @@ findRoute ( X1, Y1, X2, Y2 ):
      
     cg = CompositeGraph ( graphRepositoryRef )
 
-    shortestPath ( cg , fromT
- 
+    resList = shortestPath ( cg , fromEdge.sourceNode, toEdge.targetNode)
+
 
 

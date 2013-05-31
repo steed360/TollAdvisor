@@ -105,7 +105,7 @@ class Locator ():
         return Tile ( int (X), int (Y) )
 
     @classmethod
-    def closestEdgeInGraph (cls, aTile, aGraph ):
+    def closestEdgeInGraph (cls, X, Y, aGraph ):
 
         '''
         @aTile            gis.Tile
@@ -125,7 +125,7 @@ class Locator ():
         for i in aGraph.iterkeys ():
             for thisEdge in (aGraph[i]).itervalues ():
 
-                dist = _pythagorasDistance ( aTile.x1,aTile.y1, \
+                dist = _pythagorasDistance ( X, Y , \
                                     thisEdge.CentroidX, \
                                     thisEdge.CentroidY )
 
