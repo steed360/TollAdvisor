@@ -110,11 +110,7 @@ class GISEdge (EdgeCost):
     This class contains the geometry and cost of a single direction 
     roadlink.
 
-    The class is an Observer of the RoutingContext, event from
-    which cause the class to alter the cost appropriately. 
-
-    For example, if the RoutingContext is to avoid tolls, the 
-    cost of a tolled link will read as infinite.
+    Ideally, the geometry information would be held in a GIS 
 
     '''
 
