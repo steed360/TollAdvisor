@@ -10,14 +10,14 @@ purpose of this module is to take this job away from the UI controller.
 '''
 
 from DataStore       import AWS_S3DataStore
-from GraphRepository import GraphRepository
 from DataStructures  import GISEdge, CompositeGraph
 from algorithms      import shortestPath2
 from gis             import Locator
 
+import GraphRepository
 
 
-findRoute ( X1, Y1, X2, Y2 ):
+def findRoute ( X1, Y1, X2, Y2 ):
 
     '''
 
@@ -37,18 +37,25 @@ findRoute ( X1, Y1, X2, Y2 ):
     # identify the roads 
     fromTile = Locator.getTileFromCoords ( X1, Y1 )
 
-    if toTile not in graphRepositoryRef:
-        toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( toTile ) 
-        graphRepositoryRef [toTile] = toTileGraph
+    print "getting from tile"
+   
+
+    if fromTile.getID() not in graphRepositoryRef:
+        fromTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
+        graphRepositoryRef [toTile] = fromTileGraph
 
     fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
 
+    print "getting to tile"
+
     toTile = Locator.getTileFromCoords ( X2, Y2 )
-    if fromTile not in graphRepositoryRef:
-        toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( fromTile ) 
+    if fromTile.getID() not in graphRepositoryRef:
+        toTileGraph = AWS_S3DataStore.loadEdgeGraphForTile ( toTile ) 
         graphRepositoryRef [fromTile] = toTileGraph
 
-    fromEdge = Locator.closestEdgeInGraph ( X2, Y2, graphRepositoryRef[fromTile]   )
+    fromEdge = Locator.closestEdgeInGraph ( X2, Y2, graphRepositoryRef[toTile]   )
+
+    print "loading tileset"
 
     tileSet = Locator.getTileBoundingSet ( X1, Y1, X2, Y2 )
 
@@ -58,13 +65,20 @@ findRoute ( X1, Y1, X2, Y2 ):
         return 
 
     for aTile in tileSet:
+
+        print "loading tile %s" %(aTile)
+
         if aTile not in graphRepositoryRef:
             G = AWS_S3DataStore.loadEdgeGraphForTile ( t )
             graphRepositoryRef [t] = G
     
     cg = CompositeGraph ( graphRepositoryRef )
 
+    print "do shortest path"
     resList = shortestPath ( cg , fromEdge.sourceNode, toEdge.targetNode)
+
+    print "result is " 
+    print resList
 
     return  _getJSONResultFromNodesList ( resList )
 

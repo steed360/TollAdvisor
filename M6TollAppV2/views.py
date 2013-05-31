@@ -16,7 +16,9 @@ def showMap (request):
 
     import settings
     print settings.STATIC_ROOT
+    print "---------------------------"
     print "STATIC_URL is " + settings.STATIC_URL
+    print "---------------------------"
 
     return render_to_response ( "M6.html",{"server":request.META['HTTP_HOST']})
 

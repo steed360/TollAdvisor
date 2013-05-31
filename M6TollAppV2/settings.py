@@ -66,6 +66,8 @@ STATIC_ROOT = ''
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
+STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/')
+
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -92,6 +94,9 @@ TEMPLATE_LOADERS = (
     'django.contrib.staticfiles',
 #     'django.template.loaders.eggs.Loader',
 )
+
+
+django.contrib.staticfiles= True
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',

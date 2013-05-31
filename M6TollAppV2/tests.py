@@ -552,6 +552,25 @@ class Test_gisLocator (unittest.TestCase):
         y =  [ x.getID() for x in tileList ] 
         print y
 
+
+import RoutingFacade
+
+class Test_gisLocator (unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_routingFacade (self):
+
+        '''
+
+        '''
+        
+        result = RoutingFacade.findRoute ( -1.0001, 50.0001 , -1.900000, 50.900001 )
+    
+
+
+
 if __name__ == "__main__":
 
     import unittest
