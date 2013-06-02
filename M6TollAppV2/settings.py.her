@@ -1,4 +1,4 @@
-# Django settings for M6TollApV2 project.
+# Django settings for M6TollAppV2 project.
 import os
 
 DEBUG = True
@@ -65,7 +65,8 @@ STATIC_ROOT = ''
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 #STATIC_URL = '/static/'
-STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/' )
+STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/')
+
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -89,6 +90,7 @@ SECRET_KEY = 'rf3h0yke^5#-sopf)a=^do0^wm7ts%2lyyiwh+zac$3px$_r08'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'django.contrib.staticfiles',
 #     'django.template.loaders.eggs.Loader',
 )
 
@@ -157,6 +159,13 @@ LOGGING = {
     }
 }
 
-GLOBAL = {  "spatialIndex" : None ,  "G": None , "avoidTollObservable" : None }
+
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 

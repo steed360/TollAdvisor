@@ -1,5 +1,5 @@
-# Django settings for M6TollApV2 project.
 import os
+# Django settings for M6TollAppV2 project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -10,9 +10,10 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -64,8 +65,9 @@ STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-#STATIC_URL = '/static/'
-STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/' )
+STATIC_URL = '/static/'
+STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/')
+
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -83,14 +85,18 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'rf3h0yke^5#-sopf)a=^do0^wm7ts%2lyyiwh+zac$3px$_r08'
+SECRET_KEY = '0xk-=nm*0@pl)3=nd2bixvol0#&amp;z2qhptm*57ky)n8r(-yu=71'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'django.contrib.staticfiles',
 #     'django.template.loaders.eggs.Loader',
 )
+
+
+django.contrib.staticfiles= True
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -157,6 +163,11 @@ LOGGING = {
     }
 }
 
-GLOBAL = {  "spatialIndex" : None ,  "G": None , "avoidTollObservable" : None }
+
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 

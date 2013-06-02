@@ -24,10 +24,11 @@ from DataStructures import GISEdge
 from gis import Tile 
 
 from apperror import AppError
-from boto.s3.connection import S3Connection
 import os
-from boto.s3.key import Key
-from boto.exception import AWSConnectionError
+
+#from boto.s3.key import Key
+#from boto.exception import AWSConnectionError
+#from boto.s3.connection import S3Connection
 
 class GenericDataStore (object):
 

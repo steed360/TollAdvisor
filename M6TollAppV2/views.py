@@ -1,5 +1,6 @@
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
+import settings
 
 
 def loadData ():
@@ -14,7 +15,6 @@ def init (request):
 
 def showMap (request):
 
-    import settings
     print settings.STATIC_ROOT
     print "---------------------------"
     print "STATIC_URL is " + settings.STATIC_URL

@@ -67,8 +67,8 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     for aTile in tileSet:
         if  aTile.getID() not in graphRepositoryRef:
-            G = AWS_S3DataStore.loadEdgeGraphForTile ( t )
-            graphRepositoryRef [t] = G
+            G = AWS_S3DataStore.loadEdgeGraphForTile ( aTile )
+            graphRepositoryRef [aTile] = G
     
     cg = CompositeGraph ( graphRepositoryRef )
 
