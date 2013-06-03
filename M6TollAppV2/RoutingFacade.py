@@ -33,24 +33,38 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     '''
 
+    X1 = float (X1)
+    Y2 = float (Y2)
+
+    Y1 = float (Y1)
+    X2 = float (X2)
+
+ 
+    print ".. Find route from %s, %s " %(X1, Y1)
+    print ".. Find route to %s, %s " %(X2, Y2)
+
     graphRepositoryRef = GraphRepository.getGraphRepository ()
     dataStore = AWS_S3DataStore ()
     # identify the roads 
     fromTile = Locator.getTileFromCoords ( X1, Y1 )
   
-    print "getting from tile"
+    print "from tile %s" %(fromTile.getID()  )
 
     if fromTile.getID() not in graphRepositoryRef:
+        print "Getting From Tile %s" %(fromTile.getID())
         fromTileGraph = dataStore.loadEdgeGraphForTile ( fromTile ) 
         graphRepositoryRef [fromTile] = fromTileGraph
 
     fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
 
-    print "getting to tile"
 
     toTile = Locator.getTileFromCoords ( X2, Y2 )
 
+    print ".. TO tile %s" %(toTile.getID()  )
+
     if toTile.getID() not in graphRepositoryRef:
+        print "Getting From Tile %s" %(toTile.getID())
+
         toTileGraph = dataStore.loadEdgeGraphForTile ( toTile ) 
         graphRepositoryRef [toTile] = toTileGraph
 
@@ -67,16 +81,15 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     for aTile in tileSet:
         if  aTile.getID() not in graphRepositoryRef:
-            G = AWS_S3DataStore.loadEdgeGraphForTile ( aTile )
+            print "getting tile: %s" %(aTile.getID() )
+            G = dataStore.loadEdgeGraphForTile ( aTile )
             graphRepositoryRef [aTile] = G
     
     cg = CompositeGraph ( graphRepositoryRef )
 
     print "do shortest path"
-    resList = shortestPath2 ( cg , fromEdge.sourceNode, toEdge.targetNode)
+    resList = shortestPath2 ( cg , fromEdge.sourceNode, toEdge.sourceNode)
 
-    print "result is " 
-    print resList
 
     return  _getJSONResultFromNodesList ( resList )
 

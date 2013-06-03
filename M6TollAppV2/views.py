@@ -2,6 +2,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 import settings
 
+import RoutingFacade
+
 
 def loadData ():
     print "l1"
@@ -24,7 +26,9 @@ def showMap (request):
 
 
 def getRoute (request, fromX, fromY, toX, toY ):
-    pass
+
+    JSON_Result  =  RoutingFacade.findRoute (fromX, fromY, toX, toY )
+    return HttpResponse (JSON_Result)
 
 
 

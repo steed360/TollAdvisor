@@ -26,9 +26,9 @@ from gis import Tile
 from apperror import AppError
 import os
 
-#from boto.s3.key import Key
-#from boto.exception import AWSConnectionError
-#from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+from boto.exception import AWSConnectionError
+from boto.s3.connection import S3Connection
 
 class GenericDataStore (object):
 
@@ -97,9 +97,6 @@ class GenericDataStore (object):
 
         wktGM      = cols [7]  # e.g. LINESTRING(-3.04 53.8,-3.047 53.81)
         centroidWKT= cols [8] # e.g. POINT(-3.0460 53.81371)
-
-        integerLon = int (cols [9]) 
-        integerLat = int (cols [10]) 
 
         thisEdge   = GISEdge ( edgeID, source, target, wktGM , float (km), 
                                costHRS, centroidWKT , isToll) 
@@ -219,12 +216,14 @@ class AWS_S3DataStore (GenericDataStore):
         if 'AWS_ACCESS_KEY_ID' in os.environ:
             AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
         else :
-            AWS_ACCESS_KEY_ID = "xxx"
+            errStr ="AWS_ACCESS_KEY_ID not set"
+            raise AppError (utils.timestampStr (), 'DataStore', errStr,   '' )
 
         if 'AWS_SECRET_ACCESS_KEY' in os.environ:
             AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
         else :
-            AWS_SECRET_ACCESS_KEY = "xxx"
+            errStr ="AWS_SECRET_ACCESS_KEY not set"
+            raise AppError (utils.timestampStr (), 'DataStore', errStr,   '' )
 
         try:
             conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)

@@ -102,7 +102,13 @@ class Locator ():
         and left-most points, this is simple.
         '''
 
-        return Tile ( int (X), int (Y) )
+        xVal = 0
+        yVal = 0
+
+        xVal = int (math.floor ( X ) )
+        yVal = int (math.floor ( Y ) )
+
+        return Tile ( xVal , yVal)
 
     @classmethod
     def closestEdgeInGraph (cls, X, Y, aGraph ):

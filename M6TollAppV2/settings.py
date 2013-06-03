@@ -1,8 +1,10 @@
 # Django settings for M6TollApV2 project.
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+
+
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -64,8 +66,14 @@ STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-#STATIC_URL = '/static/'
-STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/' )
+STATIC_URL = '/static/M6TollAppV2/'
+#STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/' )
+
+if not DEBUG:
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+    STATIC_URL = S3_URL
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -128,11 +136,15 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+INSTALLED_APPS += ('storages',)
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
+import sys
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -146,7 +158,13 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level':'ERROR',
+            'class':'logging.StreamHandler',
+            'stream': sys.stdout
+        },
+
     },
     'loggers': {
         'django.request': {
@@ -154,7 +172,16 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    }
+        'M6TollV2.utils': {
+            'handlers':{ 
+                'console':{
+                'level':'ERROR',
+                'class':'logging.StreamHandler',
+                'stream': sys.stdout
+                           },
+                        },
+                    }
+        }
 }
 
 GLOBAL = {  "spatialIndex" : None ,  "G": None , "avoidTollObservable" : None }
