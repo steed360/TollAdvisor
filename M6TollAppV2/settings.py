@@ -1,7 +1,8 @@
 # Django settings for M6TollApV2 project.
 import os
 
-DEBUG = False
+DEBUG = True
+
 TEMPLATE_DEBUG = DEBUG
 
 
@@ -22,6 +23,8 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+ALLOWED_HOSTS = ['*']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -66,7 +69,7 @@ STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/M6TollAppV2/'
+STATIC_URL = '/static/'
 #STATIC_URL = os.path.join(os.path.dirname(__file__), 'templates/').replace('\\','/' )
 
 if not DEBUG:
@@ -136,7 +139,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
-INSTALLED_APPS += ('storages',)
+# INSTALLED_APPS += ('storages',)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
