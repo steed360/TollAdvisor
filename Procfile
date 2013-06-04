@@ -1,1 +1,1 @@
-web: python manage.py runserver
+web: gunicorn M6TollAppV2.wsgi
