@@ -74,7 +74,7 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     tileSet = Locator.getTileBoundingSet ( X1, Y1, X2,Y2)
 
-    if len ( tileSet ) + len ( graphRepositoryRef ) > 8:
+    if len ( tileSet ) + len ( graphRepositoryRef ) > 16:
         print "Memory allowance exceeded"
         #TODO 
         return 
