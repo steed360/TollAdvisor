@@ -18,6 +18,22 @@ import gis
 import GraphRepository
 
 
+def _missingTiles ( graphRepository, tileList ):
+
+    '''
+    Search the repository for tileList and return 
+    a sub list not in the repository
+    '''
+    l = []
+
+    for thisTile in tileList:
+        if thisTile.getID () not in graphRepository:
+            l.append (l)
+ 
+    return l
+        
+
+
 def findRoute ( X1, Y1, X2, Y2 ):
 
     '''
@@ -57,7 +73,6 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     fromEdge = Locator.closestEdgeInGraph ( X1, Y1, graphRepositoryRef[fromTile]   )
 
-
     toTile = Locator.getTileFromCoords ( X2, Y2 )
 
     print ".. TO tile %s" %(toTile.getID()  )
@@ -74,7 +89,9 @@ def findRoute ( X1, Y1, X2, Y2 ):
 
     tileSet = Locator.getTileBoundingSet ( X1, Y1, X2,Y2)
 
-    if len ( tileSet ) + len ( graphRepositoryRef ) > 16:
+    lstTilesNeeded = _missingTiles ( graphRepositoryRef, tileSet )
+
+    if len ( lstTilesNeeded ) + len ( graphRepositoryRef ) > 20:
         print "Memory allowance exceeded"
         #TODO 
         return 
