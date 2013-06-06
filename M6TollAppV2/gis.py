@@ -175,8 +175,8 @@ class Locator ():
         minY = min ( t1.getY(), t2.getY() )
         maxY = max ( t1.getY(), t2.getY() )
 
-        xRange = range ( int (minX), int(maxX) + 1 )
-        yRange = range ( int (minY), int(maxY) + 1 )
+        xRange = range ( int (minX), int(maxX) + 2 )
+        yRange = range ( int (minY), int(maxY) + 2 )
 
         resultList =[]
         for x in xRange:
