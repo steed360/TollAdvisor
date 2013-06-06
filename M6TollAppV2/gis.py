@@ -62,6 +62,12 @@ class Tile ():
         self.y1 = y1
 
 
+    def getX (self):
+        return self.x1
+
+    def getY (self):
+        return self.y1
+
     def getID (self):
 
         '''
@@ -159,11 +165,15 @@ class Locator ():
         # Return a limited set of Edges likely to form a between 
         # the two points
 
-        minX = min (X1, X2 )
-        maxX = max (X1, X2 )
+        t1 = Locator.getTileFromCoords (X1, Y1)
+        t2 = Locator.getTileFromCoords (X2, Y2)
+ 
 
-        minY = min (Y1, Y2 )
-        maxY = max (Y1, Y2 )
+        minX = min ( t1.getX(), t2.getX() )
+        maxX = max ( t1.getX(), t2.getX() )
+
+        minY = min ( t1.getY(), t2.getY() )
+        maxY = max ( t1.getY(), t2.getY() )
 
         xRange = range ( int (minX), int(maxX) + 1 )
         yRange = range ( int (minY), int(maxY) + 1 )
@@ -171,11 +181,10 @@ class Locator ():
         resultList =[]
         for x in xRange:
             for y in yRange:
+                print "yo-" + str ( Tile (x,y) )
                 resultList += [Tile (x,y)]
 
         return resultList
-
-
 
 def _pythagorasDistance ( X1, Y1, X2, Y2 ):
  

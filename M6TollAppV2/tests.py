@@ -542,7 +542,7 @@ class Test_gisLocator (unittest.TestCase):
         test a range of positive and negative co-ordinates
         '''
 
-        tileList = Locator.getTileBoundingSet ( 1, 1, 2, 2 ) 
+        tileList = Locator.getTileBoundingSet ( 1,1, 2,2 ) 
 
         y =  [ x.getID() for x in tileList ] 
 
