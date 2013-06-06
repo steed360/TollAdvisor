@@ -168,15 +168,14 @@ class Locator ():
         t1 = Locator.getTileFromCoords (X1, Y1)
         t2 = Locator.getTileFromCoords (X2, Y2)
  
-
         minX = min ( t1.getX(), t2.getX() )
         maxX = max ( t1.getX(), t2.getX() )
 
         minY = min ( t1.getY(), t2.getY() )
         maxY = max ( t1.getY(), t2.getY() )
 
-        xRange = range ( int (minX), int(maxX) + 2 )
-        yRange = range ( int (minY), int(maxY) + 2 )
+        xRange = range ( int (minX), int(maxX) + 1 )
+        yRange = range ( int (minY), int(maxY) + 1 )
 
         resultList =[]
         for x in xRange:
