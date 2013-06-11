@@ -114,20 +114,19 @@
 
         }
 
-        $( '#txtFrom' ).keypress( function(e){
+        function handleSearchCriteriaEntered ( e, txtBoxID ) {
 
-            if ( e.keyCode == 13 ) // "enter" pressed
-            {
-                if  ( $( '#txtFrom' ).val() == "" ) 
+            if ( e == "IGNORE" || e.keyCode == 13 ) // "enter" pressed
+            {   
+                if  ( $( txtBoxID ).val() == "" ) 
                     return;
-                urlTxt = "http://{{server}}/geocode/"+$( '#txtFrom' ).val();
- 
+                urlTxt = "http://{{server}}/geocode/"+$( txtBoxID ).val();
                 try {
                     $.ajax({
                         url:urlTxt,
                         type: "GET",
-                        success: function(msg, txtBoxID) {
-                            updateSearch(msg,'#txtFrom' );
+                        success: function(msg, AtxtBoxID) {
+                            updateSearch(msg,txtBoxID );
                         }
                      })
                 return false;
@@ -138,33 +137,19 @@
                     return false
                 }//CATCH
             }//IF
-        });
+        }//function
 
         $( '#txtTo' ).keypress( function(e){
-
-            if ( e.keyCode == 13 ) // "enter" pressed
-            {
-                if  ( $( '#txtTo' ).val() == "" ) 
-                    return;
-                urlTxt = "http://{{server}}/geocode/"+$( '#txtTo' ).val();
- 
-                try {
-                    $.ajax({
-                        url:urlTxt,
-                        type: "GET",
-                        success: function(msg, txtBoxID) {
-                            updateSearch(msg,'#txtTo' );
-                        }
-                     })
-                return false;
-                }
-                catch (err) {
-                    txt="Sorry: There was an error on this page.\n\n";
-                    alert(txt);
-                    return false
-                }//CATCH
-            }//IF
+            handleSearchCriteriaEntered ( e, '#txtTo'  );
         });
+        $( '#txtFrom' ).keypress( function(e){
+            handleSearchCriteriaEntered ( e, '#txtFrom'  );
+        });
+
+        $( '#txtFrom' ).mouseout( function(){
+            handleSearchCriteriaEntered ( "IGNORE", '#txtFrom'  );
+        });
+
 
 
         $.ajaxSetup ({cache:false} );
