@@ -146,8 +146,11 @@
             handleSearchCriteriaEntered ( e, '#txtFrom'  );
         });
 
-        $( '#txtFrom' ).mouseout( function(){
+        $( '#txtFrom' ).change( function(){
             handleSearchCriteriaEntered ( "IGNORE", '#txtFrom'  );
+        });
+        $( '#txtTo' ).change( function(){
+            handleSearchCriteriaEntered ( "IGNORE", '#txtTo'  );
         });
 
 
