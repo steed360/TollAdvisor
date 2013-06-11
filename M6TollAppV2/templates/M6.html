@@ -49,12 +49,83 @@ $(document).ready(function(){
 
 });
 
+
+
     function init () {
+
+
+        function updateSearch (JSONMsg, txtBoxID) {
+
+            routeLayer = map.getLayersByName ( "routeLayer")[0];
+            routeLayer.destroyFeatures();
+
+            var arr_from_json = JSON.parse( JSONMsg )
+            var placeName = arr_from_json ["display_name"];
+ 
+            var lon       = arr_from_json ["lon"];
+            var lat       = arr_from_json ["lat"];
+
+            $( txtBoxID ).val(placeName)
+
+        }
+
+        $( '#txtFrom' ).keypress( function(e){
+
+            if ( e.keyCode == 13 ) // "enter" pressed
+            {
+                if  ( $( '#txtFrom' ).val() == "" ) 
+                    return;
+                urlTxt = "http://{{server}}/geocode/"+$( '#txtFrom' ).val();
+ 
+                try {
+                    $.ajax({
+                        url:urlTxt,
+                        type: "GET",
+                        success: function(msg, txtBoxID) {
+                            updateSearch(msg,'#txtFrom' );
+                        }
+                     })
+                return false;
+                }
+                catch (err) {
+                    txt="Sorry: There was an error on this page.\n\n";
+                    alert(txt);
+                    return false
+                }//CATCH
+            }//IF
+        });
+
+        $( '#txtTo' ).keypress( function(e){
+
+            if ( e.keyCode == 13 ) // "enter" pressed
+            {
+                if  ( $( '#txtTo' ).val() == "" ) 
+                    return;
+                urlTxt = "http://{{server}}/geocode/"+$( '#txtTo' ).val();
+ 
+                try {
+                    $.ajax({
+                        url:urlTxt,
+                        type: "GET",
+                        success: function(msg, txtBoxID) {
+                            updateSearch(msg,'#txtTo' );
+                        }
+                     })
+                return false;
+                }
+                catch (err) {
+                    txt="Sorry: There was an error on this page.\n\n";
+                    alert(txt);
+                    return false
+                }//CATCH
+            }//IF
+        });
+
 
         $.ajaxSetup ({cache:false} );
 
         map = new OpenLayers.Map('map',
-{
+        {
             controls: [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar(),
@@ -165,7 +236,8 @@ $(document).ready(function(){
 
      }; // function reRoute
 
-    function updateResults (time, dist) {
+ 
+   function updateResults (time, dist) {
 
         // @time decimal in hrs
         // @dist km
@@ -252,6 +324,10 @@ $(document).ready(function(){
 
     };//function
 
+
+
+
+
 </script>
 </head>
 
@@ -273,10 +349,10 @@ $(document).ready(function(){
 
       <div class="searchWidget" visible="false">
           From <br>
-          <input type="text" > </input>
+          <input id="txtFrom" type="text" > </input>
           <br>
           To <br>
-          <input type="text" > </input>
+          <input id="txtTo" type="text" > </input>
           Go
  
           <br><br>

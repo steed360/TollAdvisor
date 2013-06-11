@@ -8,6 +8,7 @@ import M6TollAppV2.views
 urlpatterns = patterns('',
     ( r'^map/$', M6TollAppV2.views.showMap),
     ( r'^$', M6TollAppV2.views.showMap),
+    ( r'^geocode/(?P<txtLocation>.+)/$', M6TollAppV2.views.geocode),
     ( r'^route/(?P<fromX>.+)/(?P<fromY>.+)/(?P<toX>.+)/(?P<toY>.+)/$', M6TollAppV2.views.getRoute),
     ( r'^route2/(\d+)/(\d+)/(\d+)/(\d+)/$', M6TollAppV2.views.getRoute),
 )

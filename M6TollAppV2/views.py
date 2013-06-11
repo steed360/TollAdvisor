@@ -16,7 +16,6 @@ def init (request):
     return HttpResponse ("init done")
 
 def showMap (request):
-
     print settings.STATIC_ROOT
     print "---------------------------"
     print "STATIC_URL is " + settings.STATIC_URL
@@ -30,6 +29,17 @@ def getRoute (request, fromX, fromY, toX, toY ):
     JSON_Result  =  RoutingFacade.findRoute (fromX, fromY, toX, toY )
     return HttpResponse (JSON_Result)
 
+import Geocoder 
+import json
+
+def geocode (request, txtLocation ):
+    resultDict =  Geocoder.geocode ( txtLocation )
+    # resultDict = { txtLocation: a, longitude: b, latitude }
+
+    if resultDict["display_name"]== None:
+         resultDict["display_name"] = "Location Not Found"
+    JSON_Result = json.dumps ( resultDict )
+    return HttpResponse (JSON_Result)
 
 
 
