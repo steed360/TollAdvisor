@@ -60,7 +60,7 @@
 
 
     $(document).ready(function(){
-        searchButtonClicked ("resultsMenu");
+        searchButtonClicked ("searchMenu");
         resultsToggle = 1 ;
         preferencesWidget = 0 
         $(".preferencesWidget").hide ();
@@ -278,6 +278,7 @@
               OpenLayers.Projection("EPSG:900913"), new 
               OpenLayers.Projection("EPSG:4326"));
 
+
         ajaxroute (p1.x, p1.y,p2.x,p2.y);
 
      }; // function reRoute
@@ -396,12 +397,9 @@
           <br>
           To <br>
           <input id="txtTo" type="text" > </input>
-          Go
- 
+          <Br>
+          <a href="#" onclick="reRoute();">Go</a>
           <br><br>
-          Search not implemented. 
-          <br>
-          Please move red markers on map <br>to start a search.
       </div>
 
       <div class="preferencesWidget" >
