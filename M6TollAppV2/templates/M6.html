@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,52 +5,75 @@
     <link rel="stylesheet" type="text/css" href="http://s3.amazonaws.com/caliguladrive.static/map2.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script type='text/javascript' src="http://openlayers.org/api/OpenLayers.js"></script>
-<script>
+    <script type='text/javascript' 
+            src="http://svn.osgeo.org/metacrs/proj4js/trunk/lib/proj4js-combined.js"></script>
 
-function searchButtonClicked(strWhich) {
- 
-    // Hand onClick events for any of the main horizontal menu items
-    // Display the appropriate control panel and update the 
-    // position of the menu "tab"
 
-    $('.menuHeader').each ( function (i) {
-          this.style.borderBottomColor="grey";
-     });
+    <script>
 
-    var headerDIVItem = document.getElementById ( strWhich);
-    headerDIVItem.style.borderBottomColor="transparent";
+    function transformPoint (inPoint, fromSRID, toSRID) {
 
-    var widgetsArray = [".searchWidget",".preferencesWidget", ".resultsWidget" ];
+       // @inPoint           : OpenLayers.Point
+       // @fromSRID, @toSRID : e.g. 900913, 4326, 27700 
+    
+       BNGProj = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717" + 
+                 " +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36" + 
+                 " +units=m +no_defs";
 
-    for (ind in widgetsArray) { 
-        $(widgetsArray [ind]).hide();
+       if ( ! Proj4js.defs["EPSG:27700"] ) {
+            Proj4js.defs["EPSG:27700"] = BNGProj;
+       }
+
+       return new OpenLayers.Geometry.Point (inPoint.x, inPoint.y).transform(
+
+             new OpenLayers.Projection("EPSG:" + fromSRID), 
+             new OpenLayers.Projection("EPSG:" + toSRID));
     }
 
-    if    (strWhich == "searchMenu" )
-        $(".searchWidget").show();
-    else if (strWhich == "resultsMenu" )
-         $(".resultsWidget").show();
-    else if (strWhich == "preferencesMenu" ) 
-         $(".preferencesWidget").show();
-}
+
+    function searchButtonClicked(strWhich) {
+ 
+        // Hand onClick events for any of the main horizontal menu items
+        // Display the appropriate control panel and update the 
+        // position of the menu "tab"
+
+        $('.menuHeader').each ( function (i) {
+            this.style.borderBottomColor="grey";
+        });
+
+        var headerDIVItem = document.getElementById ( strWhich);
+        headerDIVItem.style.borderBottomColor="transparent";
+
+        var widgetsArray = [".searchWidget",".preferencesWidget", ".resultsWidget" ];
+
+        for (ind in widgetsArray) { 
+            $(widgetsArray [ind]).hide();
+        }
+
+        if    (strWhich == "searchMenu" )
+            $(".searchWidget").show();
+        else if (strWhich == "resultsMenu" )
+            $(".resultsWidget").show();
+        else if (strWhich == "preferencesMenu" ) 
+            $(".preferencesWidget").show();
+    }
 
 
-$(document).ready(function(){
+    $(document).ready(function(){
+        searchButtonClicked ("resultsMenu");
+        resultsToggle = 1 ;
+        preferencesWidget = 0 
+        $(".preferencesWidget").hide ();
+        $(".resultsWidget").hide ();
+    });
 
-    searchButtonClicked ("resultsMenu");
+    // Global variables
 
-    console.log ("ok. We have started");
-    resultsToggle = 1 ;
-    preferencesWidget = 0 
-    $(".preferencesWidget").hide ();
-    $(".resultsWidget").hide ();
-
-});
-
-
+    var fromPoint, toPoint;
+    var pointsLayer;
+    var map;
 
     function init () {
-
 
         function updateSearch (JSONMsg, txtBoxID) {
 
@@ -62,10 +83,34 @@ $(document).ready(function(){
             var arr_from_json = JSON.parse( JSONMsg )
             var placeName = arr_from_json ["display_name"];
  
-            var lon       = arr_from_json ["lon"];
-            var lat       = arr_from_json ["lat"];
+            var lon       = parseFloat (arr_from_json ["lon"]);
+            var lat       = parseFloat (arr_from_json ["lat"]);
 
             $( txtBoxID ).val(placeName)
+
+            if ( placeName == "Location Not Found" )
+                return;
+
+            aPointLatLon     = new OpenLayers.Geometry.Point (lon, lat);
+            transformedPoint = transformPoint ( aPointLatLon, 4326, 900913) ;
+
+            console.log ( transformedPoint.x)
+            console.log ( transformedPoint.y)
+
+            if ( txtBoxID == "#txtFrom" ) {
+                fromPoint.x = transformedPoint.x
+                fromPoint.y = transformedPoint.y
+            }
+            else{
+                toPoint.x = transformedPoint.x
+                toPoint.y = transformedPoint.y
+            }
+
+            newBounds = new OpenLayers.Bounds(fromPoint.x,fromPoint.y,toPoint.x,toPoint.y)
+
+            pointsLayer.redraw();
+            map.zoomToExtent(pointsLayer.getDataExtent());
+            map.zoomToMaxExtent()
 
         }
 
@@ -124,6 +169,8 @@ $(document).ready(function(){
 
         $.ajaxSetup ({cache:false} );
 
+        maxBounds = new OpenLayers.Bounds(-217492.2728217,6575462.2170384,373925.73179831,7296450.4514512);
+
         map = new OpenLayers.Map('map',
         {
             controls: [
@@ -133,7 +180,8 @@ $(document).ready(function(){
                 new OpenLayers.Control.LayerSwitcher(),
                 new OpenLayers.Control.Permalink(),
                 new OpenLayers.Control.OverviewMap() ],
-            maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+            maxExtent: maxBounds,
+
             projection: new OpenLayers.Projection('EPSG:900913'),
             displayProjection: new OpenLayers.Projection("EPSG:4326"),
             units: 'm'
@@ -145,17 +193,15 @@ $(document).ready(function(){
 
             map.addLayer ( osm_layer );
  
-            var proj = new OpenLayers.Projection("EPSG:4326");
-            var bounds = new OpenLayers.Bounds(-2.19, 52.25, -1.76, 52.8)
+//            var proj = new OpenLayers.Projection("EPSG:4326");
 
-//            map.zoomToMaxExtent();
+            map.setOptions({restrictedExtent:maxBounds });
 
-            map.setOptions({restrictedExtent: bounds.transform(proj, map.getProjectionObject())});
+//            map.zoomTo(2);
+            map.zoomToMaxExtent();
 
-//            map.zoomTo(9);
-
-            var pointsLayer = new OpenLayers.Layer.Vector("pointsLayer", {
-                              maxExtent: bounds,
+            pointsLayer = new OpenLayers.Layer.Vector("pointsLayer", {
+                              maxExtent: maxBounds,
                               style: {externalGraphic: 'http://www.openlayers.org/dev/img/marker.png',
                                      graphicWidth: 20, graphicHeight: 20}
                         });
@@ -208,7 +254,7 @@ $(document).ready(function(){
 //                map.zoomToMaxExtent();
 //            };
 
-            map.zoomToExtent(pointsLayer.getDataExtent());
+//            map.zoomToExtent(pointsLayer.getDataExtent());
 
 
     }; // function init()
@@ -323,9 +369,6 @@ $(document).ready(function(){
         document.getElementById("loading").style.display ="block";
 
     };//function
-
-
-
 
 
 </script>
