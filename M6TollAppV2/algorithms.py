@@ -91,7 +91,7 @@ def Dijkstra2(G,start,end=None):
             if last_v2 == v2: 
                 # This is a workaround rare network inconsistencies.
                 Q2.pop_smallest ()
-                v2  = Q.smallest  () 
+                v2  = Q2.smallest  () 
 
 
             D2[v2] = Q2[v2]
