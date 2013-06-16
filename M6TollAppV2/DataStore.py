@@ -18,6 +18,8 @@ Classes in this module are:
 
 - TestDataStore
 
+- FileDataStore
+
 '''
 
 from DataStructures import GISEdge
@@ -204,7 +206,7 @@ class AWS_S3DataStore (GenericDataStore):
         while (len ( someLines ) > 0 ):
             aLine = someLines.pop ()
             if len (aLine ) > 0:
-              resultList.append ( aLine )
+                resultList.append ( aLine )
 
         conn.close ()
 
@@ -253,4 +255,65 @@ class TestDataStore (GenericDataStore):
     def _getStringList (self, thisTile):
 
         return self.strList
+
+import math
+
+class FileDataStore (GenericDataStore):
+
+    '''
+
+    Utility class for testing program without going online
+
+    '''
+
+    def __init__ (self, filePath, hasHeader=False):
+        self.filePath = filePath
+        self.hasHeader= hasHeader
+   
+    def _getStringList (self, thisTile):
+
+        '''
+        Search for lines in the file that are in Tile thisTile
+        return a list of those matched lines.
+        '''
+
+        lstLines = []
+
+        try:
+
+           fs = open ( self.filePath, 'r' )
+
+           if (self.hasHeader): 
+               fs.readline ()
+
+           allLines = fs.readlines ()
+
+           for thisLine in allLines:
+
+#               print thisLine
+
+               cols = thisLine.split ("|")
+               centroidWKT= cols [8]
+
+               # centroidWKT is like "POINT (0.2343 0.2332432)"
+               tmpList = centroidWKT.replace ('POINT(','' ).replace ( ')','' ).split (" ")
+               X     = float (tmpList[0] )
+               Y     = float (tmpList[1] )
+
+               # Find the integer "floor" value of x & y co-ordinates
+               xVal = int (math.floor ( X ) )
+               yVal = int (math.floor ( Y ) )
+
+               if ( Tile ( xVal , yVal ) == thisTile  ):
+                   lstLines.append ( thisLine )
+
+           fs.close ()
+
+        except IOError as e:
+            import traceback, utils
+            utils.logError ( traceback.format_exc() )
+            raise AppError (utils.timestampStr (), 'FileDataStore', 'open/read file',   e )
+ 
+        return lstLines
+
 

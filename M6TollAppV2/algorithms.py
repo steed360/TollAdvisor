@@ -38,7 +38,6 @@ def Dijkstra2(G,start,end=None):
 
         midPoint = None
 
-
         end2     = start
         start2   = end
 
@@ -52,11 +51,20 @@ def Dijkstra2(G,start,end=None):
 	Q [start]  = 0
 	Q2[start2] = 0
 
-        while Q and Q2:
-            v  = Q.smallest ()
-            v2 = Q2.smallest ()
+        last_v  = None
+        last_v2 = None
+
+        while Q or Q2:
+
 
             # Search out from the start
+            v  = Q.smallest  ()
+   
+            if last_v == v: 
+                # This is a workaround for rare network inconsistencies.
+                Q.pop_smallest ()
+                v  = Q.smallest  () 
+
 	    D[v]   = Q[v]
 
 	    if v == end: 
@@ -77,6 +85,14 @@ def Dijkstra2(G,start,end=None):
                     L[w] = G[v][w]
 
             # Search out from the end
+
+            v2 = Q2.smallest ()
+
+            if last_v2 == v2: 
+                # This is a workaround rare network inconsistencies.
+                Q2.pop_smallest ()
+                v2  = Q.smallest  () 
+
 
             D2[v2] = Q2[v2]
 
@@ -100,8 +116,13 @@ def Dijkstra2(G,start,end=None):
 		    P2[w2] = v2
                     L2[w2] = G[v2][w2]
 
+            last_v  = v
+            last_v2 = v2
+
             Q.pop_smallest ()
             Q2.pop_smallest ()
+
+        print "returning"
 
         return P, P2, L, L2, midPoint
 
@@ -130,7 +151,6 @@ def shortestPath2(G,start,end):
 
         Path2 = []
 
-
         tmpMidPoint = midPoint
 	while 1:
                 try:
@@ -142,5 +162,6 @@ def shortestPath2(G,start,end):
 		tmpMidPoint = P2[tmpMidPoint]
 
 	return Path + Path2
+
 
 

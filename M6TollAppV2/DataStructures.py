@@ -309,6 +309,7 @@ class CompositeGraph (dict):
                            [(akey,val) for akey,val in dictResult.iteritems()]
 
         if len (lstResults) == 0:
+            print "failed to find key %s " %(key)
             raise AppError (utils.timestampStr (), 'DataStructures.DynamicGraph', \
                             'Failed to find key "%s" in CompositeGraph:' %(key), 'AppError' )
 
